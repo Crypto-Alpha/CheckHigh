@@ -1,13 +1,11 @@
 ---
-require:
-  - rubocop-performance
-
 AllCops:
-  TargetRubyVersion: 2.6
+  NewCops:  enable
+  TargetRubyVersion:  3.0
   Exclude:
     - _snippets/*
 
-Layout/AlignHash:
+Layout/HashAlignment:
   Enabled: true
   EnforcedColonStyle: table
 
