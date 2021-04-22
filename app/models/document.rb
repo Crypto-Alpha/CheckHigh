@@ -15,11 +15,11 @@ module CheckHigh
     # Create a new document
     def initialize(new_document)
       @author_id = new_document['author_id']
-      @filename = new_document['filename']
+      @filename = new_document['filename'][:filename]
       @id = new_document['id'] || new_id(@author_id, @filename)
       @type = new_document['type'] || DEF_TYPE
       # content of the file, need to upload a file
-      @content = new_document['content']
+      @content = new_document["filename"][:tempfile].read
     end
 
     attr_reader :id, :filename, :author_id, :type, :content
