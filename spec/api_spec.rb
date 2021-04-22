@@ -4,7 +4,6 @@ require 'minitest/autorun'
 require 'minitest/rg'
 require 'rack/test'
 require 'yaml'
-require 'rest_client'
 
 require_relative '../app/controllers/app'
 require_relative '../app/models/document'
@@ -13,15 +12,21 @@ def app
   CheckHigh::Api
 end
 
-FILENAME = 'hw'
-CONTENT = File.read('app/db/seeds/hw.html')
+FILE_PATH = 'app/db/seeds/hw.html'
 AUTHOR_ID = 111
-DATA = {'filename' => CONTENT,
-        'author_id' => AUTHOR_ID
-        }
+REQ = { 'author_id' => AUTHOR_ID,
+        'filename' =>
+          {:filename => 'hw.html',
+          :type =>'text/html',
+          :name=>'filename',
+          :tempfile => File.new(FILE_PATH),
+          :head => "Content-Disposition: form-data; name=\"filename\; filename=\"hw.html\"\r\nContent-Type: text/html\r\n"
+          }
+      }
 
 describe 'Test CheckHigh Web API' do
   include Rack::Test::Methods
+  include Rack::Test
 
   before do
     # Wipe database before each test
@@ -35,14 +40,14 @@ describe 'Test CheckHigh Web API' do
 
   describe 'Handle documents' do
     it 'HAPPY: should be able to get details of a single document' do
-      CheckHigh::Document.new(DATA).save
+      CheckHigh::Document.new(REQ).save
       id = Dir.glob("#{CheckHigh::STORE_DIR}/*.html").first.split(%r{[/.]})[3]
 
       get "/api/v1/documents/#{id}"
       content = last_response.body
 
       _(last_response.status).must_equal 200
-      _(content).must_equal HtmlBeautifier.beautify(DATA['content'])
+      _(content).must_equal HtmlBeautifier.beautify(File.read(FILE_PATH))
     end
 
     it 'SAD: should return error if unknown document requested' do
@@ -52,8 +57,12 @@ describe 'Test CheckHigh Web API' do
     end
 
     it 'HAPPY: should be able to create new documents' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
-      post 'api/v1/documents', DATA.to_json, req_header
+      req_header = { 'CONTENT_TYPE' => 'multipart/form-data' }
+      req = {
+        'author_id' => AUTHOR_ID,
+        'filename' => Rack::Test::UploadedFile.new(FILE_PATH)
+      }
+      post 'api/v1/documents', req, req_header
 
       _(last_response.status).must_equal 201
     end
