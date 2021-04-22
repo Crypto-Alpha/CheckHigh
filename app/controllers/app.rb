@@ -43,9 +43,7 @@ module CheckHigh
 
             # POST api/v1/documents
             routing.post do
-              new_data = JSON.parse(routing.body.read)
-              # binding.irb
-              new_doc = Document.new(new_data)
+              new_doc = Document.new(request.params)
 
               if new_doc.save
                 response.status = 201

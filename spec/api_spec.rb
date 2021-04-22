@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'minitest/rg'
 require 'rack/test'
 require 'yaml'
+require 'rest_client'
 
 require_relative '../app/controllers/app'
 require_relative '../app/models/document'
@@ -15,8 +16,7 @@ end
 FILENAME = 'hw'
 CONTENT = File.read('app/db/seeds/hw.html')
 AUTHOR_ID = 111
-DATA = {'filename' => FILENAME,
-        'content' => CONTENT,
+DATA = {'filename' => CONTENT,
         'author_id' => AUTHOR_ID
         }
 
