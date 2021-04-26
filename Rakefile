@@ -44,7 +44,7 @@ namespace :db do
   require 'sequel'
 
   Sequel.extension :migration
-  app = Credence::Api
+  app = CheckHigh::Api
 
   desc 'Run migrations'
   task :migrate => :print_env do
@@ -65,7 +65,7 @@ namespace :db do
       return
     end
 
-    db_filename = "app/db/store/#{Credence::Api.environment}.db"
+    db_filename = "app/db/store/#{CheckHigh::Api.environment}.db"
     FileUtils.rm(db_filename)
     puts "Deleted #{db_filename}"
   end
