@@ -1,6 +1,5 @@
-.bundle/
-config/secrets.yml
-app/db/store/*
-coverage/*
-!coverage/.resultset.json
 _*
+.bundle
+.irb_history
+app/db/store/*.db
+config/secrets.yml
