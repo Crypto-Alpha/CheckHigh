@@ -13,7 +13,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
 
-      unique [:dashboard_id, :name]
+      unique %I[dashboard_id name]
     end
   end
 end

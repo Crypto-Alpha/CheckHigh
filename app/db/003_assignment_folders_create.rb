@@ -13,7 +13,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
 
-      unique [:section_id, :name]
+      unique %I[section_id name]
     end
   end
 end
