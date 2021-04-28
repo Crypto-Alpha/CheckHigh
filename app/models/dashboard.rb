@@ -6,11 +6,13 @@ require 'sequel'
 module CheckHigh
   # Models a dashboard
   class Dashboard < Sequel::Model
+    one_to_many :folders
     many_to_many :sections,
                   class: :'CheckHigh::Section',
-                  join_table: :section_dashboard,
+                  join_table: :dashboards_sections,
                   left_key: :dashboard_id, right_key: :section_id
 
+    plugin :association_dependencies, folders: :destroy
     plugin :timestamps
 
     # rubocop:disable Metrics/MethodLength

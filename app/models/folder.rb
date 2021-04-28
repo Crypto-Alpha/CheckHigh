@@ -5,13 +5,11 @@ require 'sequel'
 
 module CheckHigh
   # Models a secret assignment
-  class Assignment < Sequel::Model
-    many_to_one :folder
-    many_to_many :sections,
-                  class: :'CheckHigh::Section',
-                  join_table: :sections_assignments,
-                  left_key: :assignment_id, right_key: :section_id
+  class Folder < Sequel::Model
+    many_to_one :dashboard
+    one_to_many :assignments
 
+    plugin :association_dependencies, assignments: :destroy
     plugin :timestamps
 
     # rubocop:disable Metrics/MethodLength
@@ -19,11 +17,10 @@ module CheckHigh
       JSON(
         {
           data: {
-            type: 'assignment',
+            type: 'folder',
             attributes: {
               id: id,
-              filename: filename,
-              content: content
+              name: name
             }
           },
           included: {

@@ -6,7 +6,7 @@ Sequel.migration do
   change do
     create_table(:assignments) do
       primary_key :id
-      foreign_key :folder_id, table: :assignment_folders
+      foreign_key :folder_id, table: :folders
 
       String :name, unique: true, null: false
       String :content, unique: true, null: false
