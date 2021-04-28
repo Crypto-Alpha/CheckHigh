@@ -6,14 +6,14 @@ Sequel.migration do
   change do
     create_table(:assignment_folders) do
       primary_key :id
-      foreign_key :section_id, table: :sections
+      foreign_key :dashboard_id, table: :dashboards
 
       String :name, unique: true, null: false
 
       DateTime :created_at
       DateTime :updated_at
 
-      unique %I[section_id name]
+      unique %I[dashboard_id name]
     end
   end
 end
