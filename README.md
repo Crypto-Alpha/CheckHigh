@@ -1,15 +1,15 @@
-# Credence API
+# CheckHigh API
 
-API to store and retrieve confidential development files (configuration, credentials)
+API to upload homework and check team's homework answer in sharing link
 
 ## Routes
 
 All routes return Json
 
 - GET `/`: Root route shows if Web API is running
-- GET `api/v1/document/`: returns all confiugration IDs
-- GET `api/v1/document/[ID]`: returns details about a single document with given ID
-- POST `api/v1/document/`: creates a new document
+- GET `api/v1/assignment/`: returns all confiugration IDs
+- GET `api/v1/assignment/[ID]`: returns details about a single assignment with given ID
+- POST `api/v1/assignmet/`: upload a new assignment
 
 ## Install
 
