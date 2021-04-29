@@ -8,7 +8,7 @@ Sequel.migration do
       primary_key :id
       foreign_key :dashboard_id, table: :dashboards
 
-      String :name, unique: true, null: false
+      String :name, null: false, default: ''
 
       DateTime :created_at
       DateTime :updated_at
