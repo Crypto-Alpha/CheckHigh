@@ -27,6 +27,7 @@ All routes return Json
 - DELETE `api/v1/sections/[section_id]` : delete a section
 
 ### Assignments
+- GET `api/v1/assignments`: returns assignments which are not belongs to any course
 - GET `api/v1/assignments/[assignmet_id]`: returns details about a single assignment with given ID
 - POST `api/v1/assignmets/`: upload a new assignment
 - PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
