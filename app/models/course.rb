@@ -5,7 +5,7 @@ require 'sequel'
 
 module CheckHigh
   # Models a secret assignment
-  class Folder < Sequel::Model
+  class Course < Sequel::Model
     many_to_one :dashboard
     one_to_many :assignments
 
@@ -17,13 +17,11 @@ module CheckHigh
       JSON(
         {
           data: {
-            type: 'folder',
+            type: 'course',
             attributes: {
               id: id,
               name: name
             }
-          },
-          included: {
           }
         }, options
       )

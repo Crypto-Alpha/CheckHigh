@@ -6,7 +6,7 @@ require 'sequel'
 module CheckHigh
   # Models a secret assignment
   class Assignment < Sequel::Model
-    many_to_one :folder
+    many_to_one :course
     many_to_many :sections,
                   class: :'CheckHigh::Section',
                   join_table: :sections_assignments,
@@ -25,8 +25,6 @@ module CheckHigh
               filename: filename,
               content: content
             }
-          },
-          included: {
           }
         }, options
       )

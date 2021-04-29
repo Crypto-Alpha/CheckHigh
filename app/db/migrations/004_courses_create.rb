@@ -4,7 +4,7 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:folders) do
+    create_table(:courses) do
       primary_key :id
       foreign_key :dashboard_id, table: :dashboards
 
