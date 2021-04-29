@@ -22,8 +22,6 @@ module CheckHigh
               id: id,
               name: name
             }
-          },
-          included: {
           }
         }, options
       )

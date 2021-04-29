@@ -23,7 +23,7 @@ module CheckHigh
             type: 'dashboard',
             attributes: {
               id: id,
-              name: name,
+              name: name
             }
           }
         }, options

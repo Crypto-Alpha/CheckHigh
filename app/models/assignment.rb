@@ -25,8 +25,6 @@ module CheckHigh
               filename: filename,
               content: content
             }
-          },
-          included: {
           }
         }, options
       )
