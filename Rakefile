@@ -55,9 +55,11 @@ namespace :db do
   desc 'Delete database'
   task :delete do
     app.DB[:dashboards].delete
-    app.DB[:sections].delete
-    app.DB[:assignment_folders].delete
+    app.DB[:share_boards].delete
+    app.DB[:dashboards_share_boards].delete
+    app.DB[:courses].delete
     app.DB[:assignments].delete
+    app.DB[:share_boards_assignments].delete
   end
 
   desc 'Delete dev or test database file'
@@ -74,4 +76,12 @@ namespace :db do
 
   desc 'Delete and migrate again'
   task reset: [:drop, :migrate]
+end
+
+namespace :newkey do
+  desc 'Create sample cryptographic key for database'
+  task :db do
+    require_app('lib')
+    puts "DB_KEY: #{SecureDB.generate_key}"
+  end
 end
