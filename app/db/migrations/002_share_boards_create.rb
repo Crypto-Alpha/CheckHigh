@@ -4,10 +4,10 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:sections) do
+    create_table(:share_boards) do
       primary_key :id
 
-      String :name, null: false, default: ''
+      String :share_board_name, null: false, default: ''
 
       DateTime :created_at
       DateTime :updated_at

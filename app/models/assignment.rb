@@ -22,7 +22,7 @@ module CheckHigh
             type: 'assignment',
             attributes: {
               id: id,
-              filename: filename,
+              filename: name,
               content: content
             }
           }
