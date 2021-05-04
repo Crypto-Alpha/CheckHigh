@@ -7,10 +7,10 @@ module CheckHigh
   # Models a secret assignment
   class Assignment < Sequel::Model
     many_to_one :course
-    many_to_many :sections,
-                  class: :'CheckHigh::Section',
-                  join_table: :sections_assignments,
-                  left_key: :assignment_id, right_key: :section_id
+    many_to_many :share_boards,
+                  class: :'CheckHigh::ShareBoard',
+                  join_table: :share_boards_assignments,
+                  left_key: :assignment_id, right_key: :share_board_id
 
     plugin :timestamps
 
@@ -22,7 +22,7 @@ module CheckHigh
             type: 'assignment',
             attributes: {
               id: id,
-              filename: name,
+              filename: assignment_name,
               content: content
             }
           }
