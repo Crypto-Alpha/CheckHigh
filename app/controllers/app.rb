@@ -3,55 +3,116 @@
 require 'roda'
 require 'json'
 
-require_relative '../models/document'
-
 module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
-    plugin :environments
     plugin :halt
-
-    configure do
-      Document.setup
-    end
 
     route do |routing| # rubocop:disable Metrics/BlockLength
       response['Content-Type'] = 'application/json'
 
       routing.root do
-        response.status = 200
         { message: 'CheckHighAPI up at /api/v1' }.to_json
       end
 
-      routing.on 'api' do
-        routing.on 'v1' do
-          routing.on 'documents' do
-            # GET api/v1/documents/[id]
-            routing.get String do |id|
-              response.status = 200
-              Document.find(id)
-            rescue StandardError
-              routing.halt 404, { message: 'Document not found' }.to_json
-            end
+      @api_root = 'api/v1'
+      routing.on @api_root do
+=begin        
+        routing.on 'dashboards' do
 
-            # GET api/v1/documents
+          # GET api/v1/dashboards/[dashboard_id]
+          routing.get String do |dashboard_id|
+            dashboard = Dashboard.where(id: dashboard_id).first
+            dashboard ? dashboard.to_json : raise('Dashboard not found')
+          rescue StandardError => e
+            routing.halt 404, { message: e.message }.to_json
+          end
+        end
+=end
+        routing.on 'courses' do
+          # GET api/v1/courses
+          routing.is do
             routing.get do
-              response.status = 200
-              output = { document_ids: Document.all }
-              JSON.pretty_generate(output)
-            end
-
-            # POST api/v1/documents
-            routing.post do
-              new_doc = Document.new(request.params)
-
-              if new_doc.save
-                response.status = 201
-                { message: 'Document saved', id: new_doc.id }.to_json
-              else
-                routing.halt 400, { message: 'Could not save document' }.to_json
+              #course_name = Course.where(dashboard_id: dashboard_id)
+              c_names = Course.all.map do |c_name|
+                c_name.name
               end
+              #binding.irb
+              output = { data: c_names }
+              JSON.pretty_generate(output)
+            rescue StandardError
+              routing.halt 404, message: 'Could not find any course'
             end
+          end
+
+          # GET api/v1/courses/[course_id]
+          routing.get String do |course_id|
+            #binding.irb
+            output = { data: Assignment.where(course_id: course_id).all } ## don't know what to show
+            JSON.pretty_generate(output)
+          rescue StandardError
+            routing.halt 404, { message: 'Could not find assignment' }.to_json
+          end
+
+          # POST api/v1/courses/
+          routing.post do 
+            new_data = JSON.parse(routing.body.read)
+            new_course = Course.new(new_data)
+            raise('Could not save course') unless new_course.save
+
+            response.status = 201
+            response['Location'] = "#{@api_root}/courses"
+            { message: 'Course saved', data: new_course }.to_json
+          rescue StandardError => e
+            routing.halt 400, { message: e.message }.to_json
+          end
+        end
+
+        routing.on 'sections' do
+          # GET api/v1/sections
+          routing.is do
+            routing.get do
+              s_names = Section.all.map do |s_name|
+                s_name.name
+              end
+              output = { data: s_names }
+              JSON.pretty_generate(output)
+            rescue StandardError
+              routing.halt 404, message: 'Could not find any section'
+            end
+          end
+
+          # GET api/v1/sections/[section_id]
+          routing.get String do |section_id|
+            #binding.irb
+            output = { data: Assignment.where(course_id: section_id).all } ## don't know what to show
+            JSON.pretty_generate(output)
+          rescue StandardError
+            routing.halt 404, { message: 'Could not find assignment' }.to_json
+          end
+
+          # POST api/v1/sections/
+          routing.post do 
+            new_data = JSON.parse(routing.body.read)
+            new_section = Section.new(new_data)
+            raise('Could not save section') unless new_section.save
+
+            response.status = 201
+            response['Location'] = "#{@api_root}/sections"
+            { message: 'Section saved', data: new_section }.to_json
+          rescue StandardError => e
+            routing.halt 400, { message: e.message }.to_json
+          end
+        end
+
+        routing.on 'assignments' do
+
+          # GET api/v1/assignments/[assignment_id]
+          routing.get String do |assignment_id|
+            output = { data: Assignment.where(id: assignment_id).all } ## don't know what to show
+            JSON.pretty_generate(output)
+          rescue StandardError
+            routing.halt 404, { message: 'Could not find assignment' }.to_json
           end
         end
       end
