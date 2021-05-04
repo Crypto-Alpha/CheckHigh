@@ -8,12 +8,14 @@ module CheckHigh
   class Dashboard < Sequel::Model
     one_to_many :courses
     many_to_many :sections,
-                  class: :'CheckHigh::Section',
-                  join_table: :dashboards_sections,
-                  left_key: :dashboard_id, right_key: :section_id
+                  class: :'CheckHigh::ShareBoard',
+                  join_table: :dashboards_share_boards,
+                  left_key: :dashboard_id, right_key: :share_board_id
 
     plugin :association_dependencies, courses: :destroy
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :dashboard_name
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
@@ -23,7 +25,7 @@ module CheckHigh
             type: 'dashboard',
             attributes: {
               id: id,
-              name: name
+              dashboard_name: dashboard_name
             }
           }
         }, options
