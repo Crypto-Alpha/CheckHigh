@@ -13,6 +13,9 @@ module CheckHigh
                   left_key: :assignment_id, right_key: :share_board_id
 
     plugin :timestamps
+    plugin :uuid, field: :id
+    plugin :whitelist_security
+    set_allowed_columns :assignment_name, :content
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
@@ -22,7 +25,7 @@ module CheckHigh
             type: 'assignment',
             attributes: {
               id: id,
-              filename: assignment_name,
+              assignment_name: assignment_name,
               content: content
             }
           }
