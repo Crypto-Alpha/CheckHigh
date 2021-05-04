@@ -1,28 +1,22 @@
 ---
+require: rubocop-performance
+
 AllCops:
-  NewCops:  enable
-  TargetRubyVersion:  3.0
-  Exclude:
-    - _snippets/*
+  TargetRubyVersion: 3.0
+  NewCops: enable         # enable new upcoming cops for rubocop
 
-Layout/HashAlignment:
-  Enabled: true
-  EnforcedColonStyle: table
-
-Layout/MultilineMethodCallIndentation:
-  Enabled: true
-  EnforcedStyle: indented
-
+# ignore block length where unavoidable (e.g., framework requires it)
 Metrics/BlockLength:
   Enabled: true
   Exclude:
-    - specs/**/*
-    - Rakefile
+    - app/controllers/*.rb # Roda's nested controllers require large blocks
+    - spec/**/* # Minitest's nested test structure requires large blocks
+    - Rakefile # Rake namespaces produce large blocks
 
 Security/YAMLLoad:
   Enabled: true
   Exclude:
-    - specs/**/*
+    - spec/**/*
 
 Style/HashSyntax:
   Enabled: true
@@ -32,5 +26,5 @@ Style/HashSyntax:
 Style/SymbolArray:
   Enabled: true
   Exclude:
-    - app/db/migrations/**/*
     - Rakefile
+    - app/db/migrations/*.rb
