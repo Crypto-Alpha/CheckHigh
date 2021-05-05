@@ -17,102 +17,183 @@ module CheckHigh
 
       @api_root = 'api/v1'
       routing.on @api_root do
-=begin        
-        routing.on 'dashboards' do
-
-          # GET api/v1/dashboards/[dashboard_id]
-          routing.get String do |dashboard_id|
-            dashboard = Dashboard.where(id: dashboard_id).first
-            dashboard ? dashboard.to_json : raise('Dashboard not found')
-          rescue StandardError => e
-            routing.halt 404, { message: e.message }.to_json
-          end
-        end
-=end
         routing.on 'courses' do
           # GET api/v1/courses
           routing.is do
             routing.get do
-              #course_name = Course.where(dashboard_id: dashboard_id)
-              c_names = Course.all.map do |c_name|
-                c_name.name
+              courses = Course.all.map do |each_course|
+                ret = JSON.parse(each_course.simplify_to_json)
+                ret["data"]["attributes"]
               end
-              #binding.irb
-              output = { data: c_names }
+              output = { data: courses }
               JSON.pretty_generate(output)
             rescue StandardError
-              routing.halt 404, message: 'Could not find any course'
+              routing.halt 404, { message: 'Could not find any course' }.to_json
+            end
+
+            # POST api/v1/courses/
+            routing.post do 
+              new_data = JSON.parse(routing.body.read)
+              new_course = Course.new(new_data)
+              raise('Could not save course') unless new_course.save
+
+              response.status = 201
+              response['Location'] = "#{@api_root}/courses"
+              { message: 'Course saved', data: new_course }.to_json
+            rescue StandardError => e
+              routing.halt 400, { message: e.message }.to_json
             end
           end
 
           # GET api/v1/courses/[course_id]
           routing.get String do |course_id|
-            #binding.irb
-            output = { data: Assignment.where(course_id: course_id).all } ## don't know what to show
+            course = JSON.parse(Course.find(id: course_id).to_json)["data"]["attributes"]
+            output = { data: course }
             JSON.pretty_generate(output)
           rescue StandardError
-            routing.halt 404, { message: 'Could not find assignment' }.to_json
+            routing.halt 404, { message: 'Could not find course details' }.to_json
           end
 
-          # POST api/v1/courses/
-          routing.post do 
-            new_data = JSON.parse(routing.body.read)
-            new_course = Course.new(new_data)
-            raise('Could not save course') unless new_course.save
+          routing.on String do |course_id|
+            routing.on 'assignments' do
+              # GET api/v1/courses/[course_id]/assignments
+              routing.get do
+                course = Course.first(id: course_id)
+                output = { data: course.assignments }
+                JSON.pretty_generate(output)
+              rescue StandardError
+                routing.halt 404, { message: 'Could not find any related assignments for this course' }.to_json
+              end
 
-            response.status = 201
-            response['Location'] = "#{@api_root}/courses"
-            { message: 'Course saved', data: new_course }.to_json
-          rescue StandardError => e
-            routing.halt 400, { message: e.message }.to_json
+              # POST api/v1/courses/[course_id]/assignments
+              # create new assignments in specific course
+              routing.post do
+                new_data = JSON.parse(routing.body.read)
+                course = Course.first(id: course_id)
+                new_assignment = course.add_assignment(new_data)
+                raise('Could not save new assignment for this course') unless new_assignment.save
+
+                response.status = 201
+                response['Location'] = "#{@api_root}/courses/#{course_id}/assignments"
+                { message: 'Course related assignment saved', data: new_assignment }.to_json
+              rescue StandardError => e
+                routing.halt 400, { message: e.message }.to_json
+              end
+            end
           end
         end
 
-        routing.on 'sections' do
-          # GET api/v1/sections
+        routing.on 'share_boards' do
+          # GET api/v1/share_boards
           routing.is do
             routing.get do
-              s_names = Section.all.map do |s_name|
-                s_name.name
+              share_boards = ShareBoard.all.map do |share_board|
+                ret = JSON.parse(share_board.simplify_to_json)
+                ret["data"]["attributes"]
               end
-              output = { data: s_names }
+              output = { data: share_boards }
               JSON.pretty_generate(output)
             rescue StandardError
-              routing.halt 404, message: 'Could not find any section'
+              routing.halt 404, { message: 'Could not find any share board'}.to_json
+            end
+
+            # POST api/v1/share_boards/
+            # create new share_board
+            routing.post do 
+              new_data = JSON.parse(routing.body.read)
+              new_share_board = ShareBoard.new(new_data)
+              raise('Could not save share board') unless new_share_board.save
+
+              response.status = 201
+              response['Location'] = "#{@api_root}/share_boards"
+              { message: 'Share Board saved', data: new_share_board }.to_json
+            rescue StandardError => e
+              routing.halt 400, { message: e.message }.to_json
             end
           end
 
-          # GET api/v1/sections/[section_id]
-          routing.get String do |section_id|
-            #binding.irb
-            output = { data: Assignment.where(course_id: section_id).all } ## don't know what to show
+          # GET api/v1/share_boards/[share_board_id]
+          routing.get String do |share_board_id|
+            share_board = JSON.parse(ShareBoard.find(id: share_board_id).to_json)["data"]["attributes"]
+            output = { data: share_board }
             JSON.pretty_generate(output)
           rescue StandardError
-            routing.halt 404, { message: 'Could not find assignment' }.to_json
+            routing.halt 404, { message: 'Could not find share board' }.to_json
           end
 
-          # POST api/v1/sections/
-          routing.post do 
-            new_data = JSON.parse(routing.body.read)
-            new_section = Section.new(new_data)
-            raise('Could not save section') unless new_section.save
+          routing.on String do |share_board_id|
+            routing.on 'assignments' do
+              # GET api/v1/share_boards/[share_board_id]/assignments
+              routing.get do
+                share_board = ShareBoard.first(id: share_board_id)
+                output = { data: share_board.assignments }
+                JSON.pretty_generate(output)
+              rescue StandardError
+                routing.halt 404, { message: 'Could not find any related assignments for this share board' }.to_json
+              end
 
-            response.status = 201
-            response['Location'] = "#{@api_root}/sections"
-            { message: 'Section saved', data: new_section }.to_json
-          rescue StandardError => e
-            routing.halt 400, { message: e.message }.to_json
+              # POST api/v1/share_boards/[share_board_id]/assignments
+              # create new assignments in specific share board
+              routing.post do
+                new_data = JSON.parse(routing.body.read)
+                share_board = ShareBoard.first(id: share_board_id)
+                new_assignment = share_board.add_assignment(new_data)
+                raise('Could not save new assignment for this share board') unless new_assignment.save
+
+                response.status = 201
+                response['Location'] = "#{@api_root}/share_boards/#{share_board_id}/assignments"
+                { message: 'Share Board related assignment saved', data: new_assignment }.to_json
+              rescue StandardError => e
+                routing.halt 400, { message: e.message }.to_json
+              end
+            end
           end
         end
 
         routing.on 'assignments' do
+          # this path will get assignments which are not belongs to any course
+          # not sure if logic is right, need to make sure with Soumya
+          # GET api/v1/assignments
+          routing.is do
+            routing.get do
+              #binding.irb
+              assignments = Assignment.where(course_id: nil).all.map do |each_assignment|
+              #assignments = Assignment.all.map do |each_assignment|
+                ret = JSON.parse(each_assignment.simplify_to_json)
+                ret["data"]["attributes"]
+              end
+              output = { data: assignments }
+              JSON.pretty_generate(output)
+              # stop the error handling for debugging
+=begin
+            rescue StandardError
+              routing.halt 404, { message: 'Could not find any assignment without a course folder' }.to_json
+=end
+            end
+
+            # this path will create assignments which are not belongs to any course and any share board
+            # not sure if logic is right, need to make sure with Soumya
+            # POST api/v1/assignments/
+            routing.post do 
+              new_data = JSON.parse(routing.body.read)
+              new_assignment = Assignment.new(new_data)
+              raise('Could not save assignment') unless new_assignment.save
+
+              response.status = 201
+              response['Location'] = "#{@api_root}/assignments"
+              { message: 'Assignment saved', data: new_assignment }.to_json
+            rescue StandardError => e
+              routing.halt 400, { message: e.message }.to_json
+            end
+          end
 
           # GET api/v1/assignments/[assignment_id]
           routing.get String do |assignment_id|
-            output = { data: Assignment.where(id: assignment_id).all } ## don't know what to show
+            assignment = JSON.parse(Assignment.find(id: course_id).to_json)["data"]["attributes"]
+            output = { data: assignment } 
             JSON.pretty_generate(output)
           rescue StandardError
-            routing.halt 404, { message: 'Could not find assignment' }.to_json
+            routing.halt 404, { message: 'Could not find assignment detail' }.to_json
           end
         end
       end
