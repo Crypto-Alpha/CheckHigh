@@ -7,7 +7,7 @@ Sequel.migration do
     create_table(:dashboards) do
       primary_key :id
 
-      String :name, null: false
+      String :dashboard_name, null: false
 
       DateTime :created_at
       DateTime :updated_at
