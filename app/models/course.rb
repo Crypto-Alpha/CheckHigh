@@ -11,6 +11,8 @@ module CheckHigh
 
     plugin :association_dependencies, assignments: :destroy
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :dashboard_name
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
@@ -20,7 +22,7 @@ module CheckHigh
             type: 'course',
             attributes: {
               id: id,
-              name: name
+              course_name: course_name
             }
           }
         }, options
