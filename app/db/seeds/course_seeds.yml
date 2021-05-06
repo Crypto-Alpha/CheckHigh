@@ -1,6 +1,6 @@
 ---
-- name: BAFT
-- name: BACS 
-- name: BAFS 
-- name: BACT 
-- name: BALA 
+- course_name: BAFT
+- course_name: BACS 
+- course_name: BAFS 
+- course_name: BACT 
+- course_name: BALA 

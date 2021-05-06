@@ -26,7 +26,7 @@ module CheckHigh
               course_name: course_name,
               links: {
                 rel: 'course_details',
-                # this link relates to course details 
+                # this link relates to course details
                 href: "#{Api.config.API_HOST}/api/v1/courses/#{id}"
               }
             }
@@ -51,7 +51,7 @@ module CheckHigh
                 # this should show assignments(only id & name) related to this course
                 href: "#{Api.config.API_HOST}/api/v1/courses/#{id}/assignments"
               }
-            },
+            }
           }
         }, options
       )

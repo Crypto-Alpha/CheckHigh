@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './spec_helper'
-
+require_relative '../spec_helper'
 
 describe 'Test CheckHigh Web API' do 
   describe 'Root route' do
@@ -11,4 +10,3 @@ describe 'Test CheckHigh Web API' do
     end
   end
 end
-
