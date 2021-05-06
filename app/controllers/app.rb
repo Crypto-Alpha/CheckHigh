@@ -40,6 +40,9 @@ module CheckHigh
               response.status = 201
               response['Location'] = "#{@api_root}/courses"
               { message: 'Course saved', data: new_course }.to_json
+            rescue Sequel::MassAssignmentRestriction
+              Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+              routing.halt 400, { message: 'Illegal Attributes' }.to_json
             rescue StandardError => e
               routing.halt 400, { message: e.message }.to_json
             end
@@ -76,6 +79,9 @@ module CheckHigh
                 response.status = 201
                 response['Location'] = "#{@api_root}/courses/#{course_id}/assignments"
                 { message: 'Course related assignment saved', data: new_assignment }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
               rescue StandardError => e
                 routing.halt 400, { message: e.message }.to_json
               end
@@ -107,6 +113,9 @@ module CheckHigh
               response.status = 201
               response['Location'] = "#{@api_root}/share_boards"
               { message: 'Share Board saved', data: new_share_board }.to_json
+            rescue Sequel::MassAssignmentRestriction
+              Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+              routing.halt 400, { message: 'Illegal Attributes' }.to_json
             rescue StandardError => e
               routing.halt 400, { message: e.message }.to_json
             end
@@ -143,6 +152,9 @@ module CheckHigh
                 response.status = 201
                 response['Location'] = "#{@api_root}/share_boards/#{share_board_id}/assignments"
                 { message: 'Share Board related assignment saved', data: new_assignment }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
               rescue StandardError => e
                 routing.halt 400, { message: e.message }.to_json
               end
@@ -182,6 +194,9 @@ module CheckHigh
               response.status = 201
               response['Location'] = "#{@api_root}/assignments"
               { message: 'Assignment saved', data: new_assignment }.to_json
+            rescue Sequel::MassAssignmentRestriction
+              Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+              routing.halt 400, { message: 'Illegal Attributes' }.to_json
             rescue StandardError => e
               routing.halt 400, { message: e.message }.to_json
             end
