@@ -9,29 +9,32 @@ All routes return Json
 ### Root
 - GET `/`: Root route shows if Web API is running
 
-### Dashboards
-- GET `api/v1/dashboards/[dashboard_id]` : returns users' dashboard
-
 #### Courses
 - GET `api/v1/courses` : returns user's all courses
-- GET `api/v1/courses/[course_id]` : returns course's all assignments
 - POST `api/v1/courses/` : create a new course
-- PUT `api/v1/courses/[course_id]` : update a course
-- DELETE `api/v1/courses/[course_id]` : delete a course
+- GET `api/v1/courses/[course_id]/assignments` : returns course's all assignments
+- POST `api/v1/courses/[course_id]/assignments`
 
-#### Sections
-- GET `api/v1/sections` : returns user's all sections
-- GET `api/v1/sections/[section_id]` : returns section's all assignments
-- POST `api/v1/sections/` : create a new section
-- PUT `api/v1/sections/[section_id]` : update a section
-- DELETE `api/v1/sections/[section_id]` : delete a section
+<!-- - PUT `api/v1/courses/[course_id]` : update a course
+- DELETE `api/v1/courses/[course_id]` : delete a course -->
+
+#### Share_Boards
+- GET `api/v1/share_boards` : returns user's all share_boards
+- POST `api/v1/share_boards/` : create a new share_boards
+- GET `api/v1/share_boards/[share_board_id]` : returns share_board's all assignments
+- GET `api/v1/share_boards/[share_board_id]/assignments`
+- POST `api/v1/share_boards/[share_board_id]/assignments`
+
+<!-- - PUT `api/v1/share_boards/[share_board_id]` : update a share_board
+- DELETE `api/v1/share_boards/[share_board_id]` : delete a share_board -->
 
 ### Assignments
 - GET `api/v1/assignments`: returns assignments which are not belongs to any course
-- GET `api/v1/assignments/[assignmet_id]`: returns details about a single assignment with given ID
 - POST `api/v1/assignmets/`: upload a new assignment
-- PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
-- DELETE `api/v1/assignmets/[assignmet_id]` : delete a assignmet
+- GET `api/v1/assignments/[assignmet_id]`: returns details about a single assignment with given ID
+
+<!-- - PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
+- DELETE `api/v1/assignmets/[assignmet_id]` : delete a assignmet -->
 
 ## Install
 
