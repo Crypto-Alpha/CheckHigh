@@ -40,6 +40,9 @@ module CheckHigh
               response.status = 201
               response['Location'] = "#{@api_root}/courses"
               { message: 'Course saved', data: new_course }.to_json
+            rescue Sequel::MassAssignmentRestriction
+              Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+              routing.halt 400, { message: 'Illegal Attributes' }.to_json
             rescue StandardError => e
               routing.halt 400, { message: e.message }.to_json
             end
@@ -76,6 +79,9 @@ module CheckHigh
                 response.status = 201
                 response['Location'] = "#{@api_root}/courses/#{course_id}/assignments"
                 { message: 'Course related assignment saved', data: new_assignment }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
               rescue StandardError => e
                 routing.halt 400, { message: e.message }.to_json
               end
@@ -107,6 +113,9 @@ module CheckHigh
               response.status = 201
               response['Location'] = "#{@api_root}/share_boards"
               { message: 'Share Board saved', data: new_share_board }.to_json
+            rescue Sequel::MassAssignmentRestriction
+              Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+              routing.halt 400, { message: 'Illegal Attributes' }.to_json
             rescue StandardError => e
               routing.halt 400, { message: e.message }.to_json
             end
@@ -143,6 +152,9 @@ module CheckHigh
                 response.status = 201
                 response['Location'] = "#{@api_root}/share_boards/#{share_board_id}/assignments"
                 { message: 'Share Board related assignment saved', data: new_assignment }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
               rescue StandardError => e
                 routing.halt 400, { message: e.message }.to_json
               end
@@ -157,17 +169,13 @@ module CheckHigh
           routing.is do
             routing.get do
               assignments = Assignment.where(course_id: nil).all.map do |each_assignment|
-              #assignments = Assignment.all.map do |each_assignment|
                 ret = JSON.parse(each_assignment.simplify_to_json)
                 ret["data"]["attributes"]
               end
               output = { data: assignments }
               JSON.pretty_generate(output)
-              # stop the error handling for debugging
-=begin
             rescue StandardError
               routing.halt 404, { message: 'Could not find any assignment without a course folder' }.to_json
-=end
             end
 
             # this path will create assignments which are not belongs to any course and any share board
@@ -181,6 +189,9 @@ module CheckHigh
               response.status = 201
               response['Location'] = "#{@api_root}/assignments"
               { message: 'Assignment saved', data: new_assignment }.to_json
+            rescue Sequel::MassAssignmentRestriction
+              Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+              routing.halt 400, { message: 'Illegal Attributes' }.to_json
             rescue StandardError => e
               routing.halt 400, { message: e.message }.to_json
             end
@@ -188,7 +199,7 @@ module CheckHigh
 
           # GET api/v1/assignments/[assignment_id]
           routing.get String do |assignment_id|
-            assignment = JSON.parse(Assignment.find(id: course_id).to_json)["data"]["attributes"]
+            assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)["data"]["attributes"]
             output = { data: assignment }
             JSON.pretty_generate(output)
           rescue StandardError
