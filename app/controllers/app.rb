@@ -199,7 +199,7 @@ module CheckHigh
 
           # GET api/v1/assignments/[assignment_id]
           routing.get String do |assignment_id|
-            assignment = JSON.parse(Assignment.find(id: course_id).to_json)["data"]["attributes"]
+            assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)["data"]["attributes"]
             output = { data: assignment }
             JSON.pretty_generate(output)
           rescue StandardError
