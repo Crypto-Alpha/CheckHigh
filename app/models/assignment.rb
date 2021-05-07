@@ -18,7 +18,7 @@ module CheckHigh
     set_allowed_columns :assignment_name, :content
 
     # Secure getters and setters
-    def assignment_name 
+    def assignment_name
       SecureDB.decrypt(assignment_name_secure)
     end
 
@@ -48,7 +48,7 @@ module CheckHigh
                 rel: 'assignment_details',
                 href: "#{Api.config.API_HOST}/api/v1/assignments/#{id}"
               }
-            },
+            }
           }
         }, options
       )
