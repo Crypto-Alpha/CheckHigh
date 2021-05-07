@@ -23,20 +23,39 @@ describe 'Test ShareBoards Handling' do
     _(result['data'].count).must_equal 3
   end
 
-  it 'HAPPY: should be able to get assignments of one specific share_board' do
-=begin
-    ass_data = DATA[:assignments][3]
-    ass = ass_orm.create(ass_data)
+  it 'HAPPY: should be able to get details of a specific share_board' do
+    # details included assignments name or id (some details about assignments related to the share board)
+    sb = sb_orm.first 
 
-    get "api/v1/assignments/#{ass.id}"
+    get "api/v1/share_boards/#{sb.id}"
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal ass.id
-    _(result['data']['attributes']['name']).must_equal ass.name
-    _(result['data']['attributes']['content']).must_equal ass.content
-=end
+    _(result['data']['id']).must_equal sb.id
+    _(result['data']['share_board_name']).must_equal sb.share_board_name
+    _(result['data']['links']['href']).must_include "share_boards/#{sb.id}/assignments"
+
   end
+
+  # this will related to some foreign key constraint problem
+  # 會有外鍵刪除問題(因為多對多，可能之後要在before那邊加上一些nullify前置設定)
+=begin
+  it 'HAPPY: should return the right number of assignments related to a specific share board' do
+    sb = sb_orm.first 
+
+    # create assignments related to the new created share board
+    DATA[:assignments][7..8].each do |assignment_data|
+      sb.add_assignment(assignment_data)
+    end
+
+    # the count of assignments which created link to the share board
+    get "api/v1/share_boards/#{sb.id}/assignments"
+    _(last_response.status).must_equal 200
+
+    result = JSON.parse last_response.body
+    _(result['data'].count).must_equal 2
+  end
+=end
 
   it 'SAD: should return error if unknown share_board requested' do
 
@@ -52,7 +71,7 @@ describe 'Test ShareBoards Handling' do
     _(last_response.status).must_equal 201
     _(last_response.header['Location'].size).must_be :>, 0
 
-    created = JSON.parse(last_response.body)['data']
+    created = JSON.parse(last_response.body)['data']['data']['attributes']
     sb = sb_orm.last
 
     _(created['id']).must_equal sb.id

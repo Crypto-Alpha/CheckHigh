@@ -9,10 +9,6 @@ describe 'Test Assignment Handling' do
   before do
     wipe_database
 
-    DATA[:courses].each do |course_data|
-      CheckHigh::Course.create(course_data)
-    end
-
     DATA[:assignments][0..2].each do |assignment_data|
       CheckHigh::Assignment.create(assignment_data)
     end
@@ -54,12 +50,11 @@ describe 'Test Assignment Handling' do
     _(last_response.status).must_equal 201
     _(last_response.header['Location'].size).must_be :>, 0
 
-    created = JSON.parse(last_response.body)['data']
+    created = JSON.parse(last_response.body)['data']['data']['attributes']
     ass = ass_orm.order(:created_at).last
 
     _(created['id']).must_equal ass.id
-    # wont equal because secure
-    _(created['assignment_name']).wont_equal ass.assignment_name
-    _(created['content']).wont_equal ass.content
+    _(created['assignment_name']).must_equal ass.assignment_name
+    _(created['content']).must_equal ass.content
   end
 end
