@@ -35,7 +35,7 @@ module CheckHigh
                 # this link relates to share_board details 
                 href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}"
               }
-            },
+            }
           }
         }, options
       )
@@ -56,7 +56,7 @@ module CheckHigh
                 # this should show assignments(only id & name) related to this share_board
                 href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}/assignments"
               }
-            },
+            }
           }
         }, options
       )
