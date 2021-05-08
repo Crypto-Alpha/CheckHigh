@@ -8,9 +8,9 @@ module CheckHigh
   class Dashboard < Sequel::Model
     one_to_many :courses
     many_to_many :sections,
-                  class: :'CheckHigh::ShareBoard',
-                  join_table: :dashboards_share_boards,
-                  left_key: :dashboard_id, right_key: :share_board_id
+                 class: :'CheckHigh::ShareBoard',
+                 join_table: :dashboards_share_boards,
+                 left_key: :dashboard_id, right_key: :share_board_id
 
     plugin :association_dependencies, courses: :destroy
     plugin :timestamps

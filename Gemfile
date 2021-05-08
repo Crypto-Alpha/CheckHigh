@@ -32,7 +32,7 @@ group :test do
   gem 'minitest-rg'
   gem 'rack-test'
 end
-  
+
 # Development
 gem 'pry'
 gem 'rerun'

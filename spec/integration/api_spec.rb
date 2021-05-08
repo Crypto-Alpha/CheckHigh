@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-describe 'Test CheckHigh Web API' do 
+describe 'Test CheckHigh Web API' do
   describe 'Root route' do
     it 'should find the root route' do
       get '/'
