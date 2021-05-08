@@ -3,12 +3,13 @@
 require 'roda'
 require 'json'
 
+# rubocop:disable Metrics/ClassLength
 module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
     plugin :halt
 
-    route do |routing| # rubocop:disable Metrics/BlockLength
+    route do |routing|
       response['Content-Type'] = 'application/json'
 
       routing.root do
@@ -23,7 +24,7 @@ module CheckHigh
             routing.get do
               courses = Course.all.map do |each_course|
                 ret = JSON.parse(each_course.simplify_to_json)
-                ret["data"]["attributes"]
+                ret['data']['attributes']
               end
               output = { data: courses }
               JSON.pretty_generate(output)
@@ -50,7 +51,7 @@ module CheckHigh
 
           # GET api/v1/courses/[course_id]
           routing.get String do |course_id|
-            course = JSON.parse(Course.find(id: course_id).to_json)["data"]["attributes"]
+            course = JSON.parse(Course.find(id: course_id).to_json)['data']['attributes']
             output = { data: course }
             JSON.pretty_generate(output)
           rescue StandardError
@@ -95,12 +96,12 @@ module CheckHigh
             routing.get do
               share_boards = ShareBoard.all.map do |share_board|
                 ret = JSON.parse(share_board.simplify_to_json)
-                ret["data"]["attributes"]
+                ret['data']['attributes']
               end
               output = { data: share_boards }
               JSON.pretty_generate(output)
             rescue StandardError
-              routing.halt 404, { message: 'Could not find any share board'}.to_json
+              routing.halt 404, { message: 'Could not find any share board' }.to_json
             end
 
             # POST api/v1/share_boards/
@@ -123,7 +124,7 @@ module CheckHigh
 
           # GET api/v1/share_boards/[share_board_id]
           routing.get String do |share_board_id|
-            share_board = JSON.parse(ShareBoard.find(id: share_board_id).to_json)["data"]["attributes"]
+            share_board = JSON.parse(ShareBoard.find(id: share_board_id).to_json)['data']['attributes']
             output = { data: share_board }
             JSON.pretty_generate(output)
           rescue StandardError
@@ -170,7 +171,7 @@ module CheckHigh
             routing.get do
               assignments = Assignment.where(course_id: nil).all.map do |each_assignment|
                 ret = JSON.parse(each_assignment.simplify_to_json)
-                ret["data"]["attributes"]
+                ret['data']['attributes']
               end
               output = { data: assignments }
               JSON.pretty_generate(output)
@@ -199,7 +200,7 @@ module CheckHigh
 
           # GET api/v1/assignments/[assignment_id]
           routing.get String do |assignment_id|
-            assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)["data"]["attributes"]
+            assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)['data']['attributes']
             output = { data: assignment }
             JSON.pretty_generate(output)
           rescue StandardError
@@ -210,3 +211,4 @@ module CheckHigh
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
