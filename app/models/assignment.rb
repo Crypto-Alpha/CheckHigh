@@ -8,9 +8,9 @@ module CheckHigh
   class Assignment < Sequel::Model
     many_to_one :course
     many_to_many :share_boards,
-                  class: :'CheckHigh::ShareBoard',
-                  join_table: :share_boards_assignments,
-                  left_key: :assignment_id, right_key: :share_board_id
+                 class: :'CheckHigh::ShareBoard',
+                 join_table: :share_boards_assignments,
+                 left_key: :assignment_id, right_key: :share_board_id
 
     plugin :timestamps
     plugin :uuid, field: :id
@@ -36,7 +36,7 @@ module CheckHigh
 
     # rubocop:disable Metrics/MethodLength
     def simplify_to_json(options = {})
-      # for only showing assignment id & name 
+      # for only showing assignment id & name
       JSON(
         {
           data: {

@@ -16,7 +16,7 @@ module CheckHigh
 
     # rubocop:disable Metrics/MethodLength
     def simplify_to_json(options = {})
-      # for only showing course id & name 
+      # for only showing course id & name
       JSON(
         {
           data: {
