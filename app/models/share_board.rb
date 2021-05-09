@@ -11,10 +11,10 @@ module CheckHigh
                  join_table: :share_boards_assignments,
                  left_key: :share_board_id, right_key: :assignment_id
 
-    many_to_many :dashboards,
-                 class: :'CheckHigh::Dashboard',
-                 join_table: :dashboards_share_boards,
-                 sleft_key: :share_board_id, right_key: :dashboard_id
+    many_to_many :accounts,
+                 class: :'CheckHigh::Account',
+                 join_table: :accounts_share_boards,
+                 sleft_key: :share_board_id, right_key: :account_id
 
     plugin :timestamps
     plugin :whitelist_security
