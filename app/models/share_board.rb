@@ -6,19 +6,25 @@ require 'sequel'
 module CheckHigh
   # Models a section
   class ShareBoard < Sequel::Model
+    many_to_one :owner, class: :'CheckHigh::Account'
+
+    many_to_many :collaborators,
+                 class: :'CheckHigh::Account',
+                 join_table: :accounts_share_boards,
+                 left_key: :share_board_id, right_key: :collaborator_id
+
     many_to_many :assignments,
                  class: :'CheckHigh::Assignment',
                  join_table: :share_boards_assignments,
                  left_key: :share_board_id, right_key: :assignment_id
 
-    many_to_many :accounts,
-                 class: :'CheckHigh::Account',
-                 join_table: :accounts_share_boards,
-                 sleft_key: :share_board_id, right_key: :account_id
-
     plugin :timestamps
     plugin :whitelist_security
     set_allowed_columns :share_board_name
+
+    plugin :association_dependencies,
+    assignments: :nullify,
+    collaborators: :nullify
 
     # rubocop:disable Metrics/MethodLength
     def simplify_to_json(options = {})
