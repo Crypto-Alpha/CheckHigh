@@ -16,10 +16,10 @@ DIR = File.dirname(__FILE__)
 ACCOUNTS_INFO = YAML.load_file("#{DIR}/account_seeds.yml")
 OWNER_COURSES_INFO = YAML.load_file("#{DIR}/owners_courses.yml")
 COURSE_INFO = YAML.load_file("#{DIR}/course_seeds.yml")
-OWNER_SHAREBOARDS_INFO = YAML.load_file("#{DIR}/owners_shareboards.yml")
+OWNER_SHAREBOARDS_INFO = YAML.load_file("#{DIR}/owners_share_boards.yml")
 SHARE_BOARD_INFO = YAML.load_file("#{DIR}/share_board_seeds.yml")
 ASSIGNMENT_INFO = YAML.load_file("#{DIR}/assignment_seeds.yml")
-COLLO_INFO = YAML.load_file("#{DIR}/share_boards_collaborators.yml")
+COLLABOR_INFO = YAML.load_file("#{DIR}/share_boards_collaborators.yml")
 
 def create_accounts
   ACCOUNTS_INFO.each do |account_info|
@@ -62,19 +62,20 @@ def create_assignments
     CheckHigh::CreateAssiForCourse.call(
       course_id: course.id, assignment_data: assi_info
     )
-#    CheckHigh::CreateAssiForSrb.call(
-#      share_board_id: course.id, assignment_data: assi_info
-#    )
+    # Wait for the bug solved for many to many adding problem (ShareBoard cannot related to Assignment)
+    #CheckHigh::CreateAssiForSrb.call(
+    #  share_board_id: course.id, assignment_data: assi_info
+    #)
   end
 end
 
-#def add_collaborators
-#  contrib_info = CONTRIB_INFO
-#  contrib_info.each do |contrib|
-#    proj = CheckHigh::Project.first(name: contrib['proj_name'])
-#    contrib['collaborator_email'].each do |email|
-#      collaborator = CheckHigh::Account.first(email: email)
-#      proj.add_collaborator(collaborator)
-#    end
-#  end
-#end
+def add_collaborators
+  collabor_info = COLLABOR_INFO
+  collabor_info.each do |collabor|
+    share_board = CheckHigh::ShareBoard.first(share_board_name: collabor['share_board_name'])
+    collabor['collaborator_email'].each do |email|
+      collaborator = CheckHigh::Account.first(email: email)
+      share_board.add_collaborator(collaborator)
+    end
+  end
+end
