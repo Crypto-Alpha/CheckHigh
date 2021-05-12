@@ -1,15 +1,40 @@
-# Credence API
+# CheckHigh API
 
-API to store and retrieve confidential development files (configuration, credentials)
+API to upload homework and check team's homework answer in sharing link
 
 ## Routes
 
 All routes return Json
 
+### Root
 - GET `/`: Root route shows if Web API is running
-- GET `api/v1/document/`: returns all confiugration IDs
-- GET `api/v1/document/[ID]`: returns details about a single document with given ID
-- POST `api/v1/document/`: creates a new document
+
+#### Courses
+- GET `api/v1/courses` : returns user's all courses
+- POST `api/v1/courses/` : create a new course
+- GET `api/v1/courses/[course_id]/assignments` : returns course's all assignments
+- POST `api/v1/courses/[course_id]/assignments`
+
+<!-- - PUT `api/v1/courses/[course_id]` : update a course
+- DELETE `api/v1/courses/[course_id]` : delete a course -->
+
+#### Share_Boards
+- GET `api/v1/share_boards` : returns user's all share_boards
+- POST `api/v1/share_boards/` : create a new share_boards
+- GET `api/v1/share_boards/[share_board_id]` : returns share_board's all assignments
+- GET `api/v1/share_boards/[share_board_id]/assignments`
+- POST `api/v1/share_boards/[share_board_id]/assignments`
+
+<!-- - PUT `api/v1/share_boards/[share_board_id]` : update a share_board
+- DELETE `api/v1/share_boards/[share_board_id]` : delete a share_board -->
+
+### Assignments
+- GET `api/v1/assignments`: returns assignments which are not belongs to any course
+- POST `api/v1/assignmets/`: upload a new assignment
+- GET `api/v1/assignments/[assignmet_id]`: returns details about a single assignment with given ID
+
+<!-- - PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
+- DELETE `api/v1/assignmets/[assignmet_id]` : delete a assignmet -->
 
 ## Install
 
