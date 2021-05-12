@@ -55,6 +55,7 @@ namespace :db do
 
   desc 'Delete database'
   task :delete do
+    app.DB[:accounts]
     app.DB[:dashboards].delete
     app.DB[:share_boards].delete
     app.DB[:dashboards_share_boards].delete

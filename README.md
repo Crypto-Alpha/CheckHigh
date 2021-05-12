@@ -15,8 +15,9 @@ All routes return Json
 - GET `api/v1/courses/[course_id]/assignments` : returns course's all assignments
 - POST `api/v1/courses/[course_id]/assignments`
 
-<!-- - PUT `api/v1/courses/[course_id]` : update a course
-- DELETE `api/v1/courses/[course_id]` : delete a course -->
+TODO:
+- PUT `api/v1/courses/[course_id]` : update a course
+- DELETE `api/v1/courses/[course_id]` : delete a course
 
 #### Share_Boards
 - GET `api/v1/share_boards` : returns user's all share_boards
@@ -25,16 +26,18 @@ All routes return Json
 - GET `api/v1/share_boards/[share_board_id]/assignments`
 - POST `api/v1/share_boards/[share_board_id]/assignments`
 
-<!-- - PUT `api/v1/share_boards/[share_board_id]` : update a share_board
-- DELETE `api/v1/share_boards/[share_board_id]` : delete a share_board -->
+TODO:
+- PUT `api/v1/share_boards/[share_board_id]` : update a share_board
+- DELETE `api/v1/share_boards/[share_board_id]` : delete a share_board
 
 ### Assignments
 - GET `api/v1/assignments`: returns assignments which are not belongs to any course
 - POST `api/v1/assignmets/`: upload a new assignment
 - GET `api/v1/assignments/[assignmet_id]`: returns details about a single assignment with given ID
 
-<!-- - PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
-- DELETE `api/v1/assignmets/[assignmet_id]` : delete a assignmet -->
+TODO:
+- PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
+- DELETE `api/v1/assignmets/[assignmet_id]` : delete a assignmet
 
 ## Install
 

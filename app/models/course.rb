@@ -6,13 +6,16 @@ require 'sequel'
 module CheckHigh
   # Models a secret assignment
   class Course < Sequel::Model
-    many_to_one :dashboard
+    many_to_one :owner, class: :'CheckHigh::Account'
+    
     one_to_many :assignments
 
-    plugin :association_dependencies, assignments: :destroy
     plugin :timestamps
     plugin :whitelist_security
     set_allowed_columns :course_name
+
+    plugin :association_dependencies,
+    assignments: :destroy
 
     # rubocop:disable Metrics/MethodLength
     def simplify_to_json(options = {})

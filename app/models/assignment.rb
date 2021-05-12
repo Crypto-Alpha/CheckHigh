@@ -12,7 +12,7 @@ module CheckHigh
                  join_table: :share_boards_assignments,
                  left_key: :assignment_id, right_key: :share_board_id
 
-    plugin :timestamps
+    plugin :timestamps, update_on_create: true
     plugin :uuid, field: :id
     plugin :whitelist_security
     set_allowed_columns :assignment_name, :content
