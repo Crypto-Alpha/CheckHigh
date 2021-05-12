@@ -103,8 +103,9 @@ module CheckHigh
               # create new assignments in specific course
               routing.post do
                 new_data = JSON.parse(routing.body.read)
-                course = Course.first(id: course_id)
-                new_assignment = course.add_assignment(new_data)
+                new_assignment = CreateAssiForCourse.call(
+                  course_id: course_id, assignment_data: new_data
+                )
                 raise('Could not save new assignment for this course') unless new_assignment.save
 
                 response.status = 201
@@ -176,8 +177,9 @@ module CheckHigh
               # create new assignments in specific share board
               routing.post do
                 new_data = JSON.parse(routing.body.read)
-                share_board = ShareBoard.first(id: share_board_id)
-                new_assignment = share_board.add_assignment(new_data)
+                new_assignment = CreateAssiForSrb.call(
+                  share_board_id: share_board_id, assignment_data: new_data
+                )
                 raise('Could not save new assignment for this share board') unless new_assignment.save
 
                 response.status = 201
