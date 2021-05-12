@@ -178,7 +178,8 @@ module CheckHigh
               routing.post do
                 new_data = JSON.parse(routing.body.read)
                 new_assignment = CreateAssiForSrb.call(
-                  share_board_id: share_board_id, assignment_data: new_data)
+                  share_board_id: share_board_id, assignment_data: new_data
+                )
                 raise('Could not save new assignment for this share board') unless new_assignment.save
 
                 response.status = 201
