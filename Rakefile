@@ -77,6 +77,10 @@ namespace :db do
   desc 'Delete and migrate again'
   task reset: [:drop, :migrate]
 
+  task :load_models do
+    require_app(%w[lib models services])
+  end
+
   task :reset_seeds => [:load_models] do
     app.DB[:schema_seeds].delete if app.DB.tables.include?(:schema_seeds)
     CheckHigh::Account.dataset.destroy
