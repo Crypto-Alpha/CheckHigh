@@ -56,9 +56,7 @@ namespace :db do
   desc 'Delete database'
   task :delete do
     app.DB[:accounts]
-    app.DB[:dashboards].delete
     app.DB[:share_boards].delete
-    app.DB[:dashboards_share_boards].delete
     app.DB[:courses].delete
     app.DB[:assignments].delete
     app.DB[:share_boards_assignments].delete
@@ -78,6 +76,22 @@ namespace :db do
 
   desc 'Delete and migrate again'
   task reset: [:drop, :migrate]
+
+  task :reset_seeds => [:load_models] do
+    app.DB[:schema_seeds].delete if app.DB.tables.include?(:schema_seeds)
+    CheckHigh::Account.dataset.destroy
+  end
+
+  desc 'Seeds the development database'
+  task :seed => [:load_models] do
+    require 'sequel/extensions/seed'
+    Sequel::Seed.setup(:development)
+    Sequel.extension :seed
+    Sequel::Seeder.apply(app.DB, 'app/db/seeds')
+  end
+
+  desc 'Delete all data and reseed'
+  task reseed: [:reset_seeds, :seed]
 end
 
 namespace :newkey do
