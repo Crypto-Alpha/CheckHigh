@@ -6,7 +6,7 @@ Sequel.seed(:development) do
     create_accounts
     create_owned_courses
     create_owned_share_boards
-    create_owned_assignments
+    create_assignments
     add_collaborators
   end
 end
@@ -34,7 +34,10 @@ def create_owned_courses
       course_data = COURSE_INFO.find { |course| course['course_name'] == course_name }
       # this could change to service obj
       # see soumya's create_project_for_owner.rb
-      CheckHigh::Account.find(id: account.id).add_owned_course(course_data)
+      # CheckHigh::Account.find(id: account.id).add_owned_course(course_data)
+      CheckHigh::CreateCourseForAccount.call(
+        account_id: account.id, course_data: course_data
+      )
     end
   end
 end
@@ -46,7 +49,10 @@ def create_owned_share_boards
       srb_data = SHARE_BOARD_INFO.find { |srb| srb['share_board_name'] == share_board_name }
       # this could change to service obj
       # see soumya's create_project_for_owner.rb
-      CheckHigh::Account.find(id: account.id).add_owned_share_board(srb_data)
+      # CheckHigh::Account.find(id: account.id).add_owned_share_board(srb_data)
+      CheckHigh::CreateShareBoardForAccount.call(
+        account_id: account.id, shareboard_data: srb_data
+      )
     end
   end
 end
@@ -63,9 +69,9 @@ def create_assignments
       course_id: course.id, assignment_data: assi_info
     )
     # Wait for the bug solved for many to many adding problem (ShareBoard cannot related to Assignment)
-    #CheckHigh::CreateAssiForSrb.call(
-    #  share_board_id: course.id, assignment_data: assi_info
-    #)
+    CheckHigh::CreateAssiForSrb.call(
+     share_board_id: share_board.id, assignment_data: assi_info
+    )
   end
 end
 
