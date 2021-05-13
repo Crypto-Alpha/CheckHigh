@@ -56,17 +56,10 @@ namespace :db do
   desc 'Delete database'
   task :delete do
     app.DB[:accounts]
-    app.DB[:share_boards].delete
-<<<<<<< HEAD
     app.DB[:shareboards].delete
     app.DB[:accounts_shareboards].delete
-=======
->>>>>>> 16580f300592bec2404971ea40e56a0d1ca9106c
     app.DB[:courses].delete
     app.DB[:assignments].delete
-    app.DB[:assignments_share_boards].delete
-    app.DB[:shareboards_assignments].delete
-    app.DB[:share_boards_assignments].delete
     app.DB[:assignments_shareboards].delete
   end
 
