@@ -6,7 +6,7 @@ Sequel.seed(:development) do
     create_accounts
     create_owned_courses
     create_owned_share_boards
-    create_assignments
+    create_owned_assignments
     add_collaborators
   end
 end
