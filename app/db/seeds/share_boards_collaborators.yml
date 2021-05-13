@@ -1,0 +1,17 @@
+---
+- share_board_name: hw1_bacs
+  collaborator_email: 
+    - riley@gmail.com
+    - yanyu@gmail.com
+- share_board_name: hw2_bacs
+  collaborator_email: 
+    - yanyu@gmail.com
+- share_board_name: hw1_baft
+  collaborator_email: 
+    - riley@gmail.com
+    - rona@gmail.com
+- share_board_name: hw2_baft
+  collaborator_email: 
+    - riley@gmail.com
+    - rona@gmail.com
+    - yanyu@gmail.com

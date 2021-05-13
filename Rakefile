@@ -57,8 +57,11 @@ namespace :db do
   task :delete do
     app.DB[:accounts]
     app.DB[:share_boards].delete
+<<<<<<< HEAD
     app.DB[:shareboards].delete
     app.DB[:accounts_shareboards].delete
+=======
+>>>>>>> 16580f300592bec2404971ea40e56a0d1ca9106c
     app.DB[:courses].delete
     app.DB[:assignments].delete
     app.DB[:assignments_share_boards].delete
@@ -81,6 +84,26 @@ namespace :db do
 
   desc 'Delete and migrate again'
   task reset: [:drop, :migrate]
+
+  task :load_models do
+    require_app(%w[lib models services])
+  end
+
+  task :reset_seeds => [:load_models] do
+    app.DB[:schema_seeds].delete if app.DB.tables.include?(:schema_seeds)
+    CheckHigh::Account.dataset.destroy
+  end
+
+  desc 'Seeds the development database'
+  task :seed => [:load_models] do
+    require 'sequel/extensions/seed'
+    Sequel::Seed.setup(:development)
+    Sequel.extension :seed
+    Sequel::Seeder.apply(app.DB, 'app/db/seeds')
+  end
+
+  desc 'Delete all data and reseed'
+  task reseed: [:reset_seeds, :seed]
 end
 
 namespace :newkey do
