@@ -15,7 +15,7 @@ module CheckHigh
 
     many_to_many :assignments,
                  class: :'CheckHigh::Assignment',
-                 join_table: :share_boards_assignments,
+                 join_table: :assignments_share_boards,
                  left_key: :share_board_id, right_key: :assignment_id
 
     plugin :timestamps
