@@ -7,10 +7,10 @@ module CheckHigh
   # Models a secret assignment
   class Assignment < Sequel::Model
     many_to_one :course
-    many_to_many :share_boards,
+    many_to_many :shareboards,
                  class: :'CheckHigh::ShareBoard',
-                 join_table: :share_boards_assignments,
-                 left_key: :assignment_id, right_key: :share_board_id
+                 join_table: :shareboards_assignments,
+                 left_key: :assignment_id, right_key: :shareboard_id
 
     plugin :timestamps, update_on_create: true
     plugin :uuid, field: :id

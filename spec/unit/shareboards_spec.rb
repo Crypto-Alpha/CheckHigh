@@ -8,10 +8,10 @@ describe 'Test Assignment Handling' do
   end
 
   it 'HAPPY: should retrieve correct data from database' do
-    sb_data = DATA[:share_boards][1]
+    sb_data = DATA[:shareboards][1]
     new_sb = CheckHigh::ShareBoard.create(sb_data)
 
     sb = CheckHigh::ShareBoard.find(id: new_sb.id)
-    _(sb.share_board_name).must_equal new_sb.share_board_name
+    _(sb.shareboard_name).must_equal new_sb.shareboard_name
   end
 end

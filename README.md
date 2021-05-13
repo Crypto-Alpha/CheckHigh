@@ -19,16 +19,16 @@ TODO:
 - PUT `api/v1/courses/[course_id]` : update a course
 - DELETE `api/v1/courses/[course_id]` : delete a course
 
-#### Share_Boards
-- GET `api/v1/share_boards` : returns user's all share_boards
-- POST `api/v1/share_boards/` : create a new share_boards
-- GET `api/v1/share_boards/[share_board_id]` : returns share_board's all assignments
-- GET `api/v1/share_boards/[share_board_id]/assignments`
-- POST `api/v1/share_boards/[share_board_id]/assignments`
+#### ShareBoards
+- GET `api/v1/shareboards` : returns user's all shareboards
+- POST `api/v1/shareboards/` : create a new shareboards
+- GET `api/v1/shareboards/[shareboard_id]` : returns shareboard's all assignments
+- GET `api/v1/shareboards/[shareboard_id]/assignments`
+- POST `api/v1/shareboards/[shareboard_id]/assignments`
 
 TODO:
-- PUT `api/v1/share_boards/[share_board_id]` : update a share_board
-- DELETE `api/v1/share_boards/[share_board_id]` : delete a share_board
+- PUT `api/v1/shareboards/[shareboard_id]` : update a shareboard
+- DELETE `api/v1/shareboards/[shareboard_id]` : delete a shareboard
 
 ### Assignments
 - GET `api/v1/assignments`: returns assignments which are not belongs to any course

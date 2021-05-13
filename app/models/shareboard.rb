@@ -10,17 +10,17 @@ module CheckHigh
 
     many_to_many :collaborators,
                  class: :'CheckHigh::Account',
-                 join_table: :accounts_share_boards,
-                 left_key: :share_board_id, right_key: :collaborator_id
+                 join_table: :accounts_shareboards,
+                 left_key: :shareboard_id, right_key: :collaborator_id
 
     many_to_many :assignments,
                  class: :'CheckHigh::Assignment',
-                 join_table: :share_boards_assignments,
-                 left_key: :share_board_id, right_key: :assignment_id
+                 join_table: :shareboards_assignments,
+                 left_key: :shareboard_id, right_key: :assignment_id
 
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :share_board_name
+    set_allowed_columns :shareboard_name
 
     plugin :association_dependencies,
     assignments: :nullify,
@@ -32,14 +32,14 @@ module CheckHigh
       JSON(
         {
           data: {
-            type: 'share_board',
+            type: 'shareboard',
             attributes: {
               id: id,
-              share_board_name: share_board_name,
+              shareboard_name: shareboard_name,
               links: {
-                rel: 'share_board_details',
-                # this link relates to share_board details
-                href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}"
+                rel: 'shareboard_details',
+                # this link relates to shareboard details
+                href: "#{Api.config.API_HOST}/api/v1/shareboards/#{id}"
               }
             }
           }
@@ -53,14 +53,14 @@ module CheckHigh
       JSON(
         {
           data: {
-            type: 'share_board',
+            type: 'shareboard',
             attributes: {
               id: id,
-              share_board_name: share_board_name,
+              shareboard_name: shareboard_name,
               links: {
                 rel: 'assignment_details',
-                # this should show assignments(only id & name) related to this share_board
-                href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}/assignments"
+                # this should show assignments(only id & name) related to this shareboard
+                href: "#{Api.config.API_HOST}/api/v1/shareboards/#{id}/assignments"
               }
             }
           }

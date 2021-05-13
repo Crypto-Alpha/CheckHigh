@@ -56,12 +56,15 @@ namespace :db do
   desc 'Delete database'
   task :delete do
     app.DB[:accounts]
-    app.DB[:dashboards].delete
     app.DB[:share_boards].delete
-    app.DB[:dashboards_share_boards].delete
+    app.DB[:shareboards].delete
+    app.DB[:accounts_shareboards].delete
     app.DB[:courses].delete
     app.DB[:assignments].delete
+    app.DB[:assignments_share_boards].delete
+    app.DB[:shareboards_assignments].delete
     app.DB[:share_boards_assignments].delete
+    app.DB[:assignments_shareboards].delete
   end
 
   desc 'Delete dev or test database file'
