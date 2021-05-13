@@ -1,0 +1,10 @@
+---
+- username: soumya.ray
+  share_board_name:
+    - hw1_bacs
+    - hw2_bacs
+
+- username: galit
+  share_board_name:
+    - hw1_baft
+    - hw2_baft
