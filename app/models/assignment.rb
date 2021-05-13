@@ -9,7 +9,7 @@ module CheckHigh
     many_to_one :course
     many_to_many :shareboards,
                  class: :'CheckHigh::ShareBoard',
-                 join_table: :shareboards_assignments,
+                 join_table: :assignments_shareboards,
                  left_key: :assignment_id, right_key: :shareboard_id
 
     plugin :timestamps, update_on_create: true
