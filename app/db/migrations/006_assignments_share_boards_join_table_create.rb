@@ -4,6 +4,6 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_join_table(share_board_id: :share_boards, assignment_id: :assignments)
+    create_join_table(assignment_id: :assignments, share_board_id: :share_boards)
   end
 end
