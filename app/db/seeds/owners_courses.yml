@@ -1,0 +1,9 @@
+---
+- username: soumya.ray
+  course_name:
+    - BACS
+    - SOA
+      
+- username: galit
+  course_name:
+    - BAFT
