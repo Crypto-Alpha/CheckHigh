@@ -6,13 +6,14 @@ require 'sequel'
 module CheckHigh
   # Models a secret assignment
   class Assignment < Sequel::Model
+    many_to_one :owner, class: :'CheckHigh::Account'
     many_to_one :course
     many_to_many :share_boards,
                  class: :'CheckHigh::ShareBoard',
                  join_table: :assignments_share_boards,
                  left_key: :assignment_id, right_key: :share_board_id
 
-    plugin :timestamps, update_on_create: true
+    plugin :timestamps
     plugin :uuid, field: :id
     plugin :whitelist_security
     set_allowed_columns :assignment_name, :content
