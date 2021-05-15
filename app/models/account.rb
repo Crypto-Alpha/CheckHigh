@@ -7,16 +7,15 @@ require_relative './password'
 module CheckHigh
   # Models a dashboard
   class Account < Sequel::Model
-    
-    one_to_many :owned_share_boards, class: :'CheckHigh::ShareBoard', key: :owner_share_board_id
-    plugin :association_dependencies, owned_share_boards: :destroy
 
-    one_to_many :owned_courses, class: :'CheckHigh::Course', key: :owner_course_id
-    plugin :association_dependencies, owned_courses: :destroy
+    one_to_many :owned_share_boards, class: :'CheckHigh::ShareBoard', key: :owner_share_board_id
 
     one_to_many :owned_assignments, class: :'CheckHigh::Assignment', key: :owner_assignment_id
-    plugin :association_dependencies, owned_assignments: :destroy
 
+    one_to_many :owned_courses, class: :'CheckHigh::Course', key: :owner_course_id
+
+    plugin :association_dependencies
+    add_association_dependencies owned_share_boards: :destroy, owned_courses: :destroy, owned_assignments: :destroy
 
     many_to_many :collaborations,
                  class: :'CheckHigh::ShareBoard',
