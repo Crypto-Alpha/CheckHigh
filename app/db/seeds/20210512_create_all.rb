@@ -65,12 +65,12 @@ def create_assignments
     assi_info = assi_info_each.next
     course = courses_cycle.next
     share_board = share_boards_cycle.next
-    CheckHigh::CreateAssiForCourse.call(
+    new_assi = CheckHigh::CreateAssiForCourse.call(
       course_id: course.id, assignment_data: assi_info
     )
     # Wait for the bug solved for many to many adding problem (ShareBoard cannot related to Assignment)
     CheckHigh::CreateAssiForSrb.call(
-     share_board_id: share_board.id, assignment_data: assi_info
+     share_board_id: share_board.id, assignment_data: new_assi
     )
   end
 end
