@@ -6,8 +6,8 @@ Sequel.migration do
   change do
     create_table(:assignments) do
       uuid :id, primary_key: true
-      foreign_key :course_id, table: :courses
       foreign_key :owner_assignment_id, table: :accounts
+      foreign_key :course_id, table: :courses
 
       String :assignment_name_secure, null: false, default: ''
       String :content_secure, null: false, default: ''
