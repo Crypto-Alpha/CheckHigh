@@ -70,7 +70,7 @@ def create_assignments
     )
     # Wait for the bug solved for many to many adding problem (ShareBoard cannot related to Assignment)
     CheckHigh::CreateAssiForSrb.call(
-     share_board_id: share_board.id, assignment_data: new_assi
+      share_board_id: share_board.id, assignment_data: new_assi
     )
   end
 end
