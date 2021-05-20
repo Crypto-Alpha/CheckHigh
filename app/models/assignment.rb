@@ -16,6 +16,7 @@ module CheckHigh
     plugin :timestamps
     plugin :uuid, field: :id
     plugin :whitelist_security
+    plugin :association_dependencies, share_boards: :nullify
     set_allowed_columns :assignment_name, :content
 
     # Secure getters and setters
