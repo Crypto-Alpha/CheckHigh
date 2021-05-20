@@ -57,6 +57,7 @@ def create_owned_share_boards
   end
 end
 
+# rubocop:disable Metrics/MethodLength
 def create_assignments
   assi_info_each = ASSIGNMENT_INFO.each
   courses_cycle = CheckHigh::Course.all.cycle
@@ -74,6 +75,7 @@ def create_assignments
     )
   end
 end
+# rubocop:enable Metrics/MethodLength
 
 def add_collaborators
   collabor_info = COLLABOR_INFO
