@@ -13,6 +13,7 @@ module CheckHigh
         # GET api/v1/accounts/[username]
         routing.get do
           account = Account.first(username: username)
+
           account ? account.to_json : raise('Account not found')
         rescue StandardError => e
           routing.halt 404, { message: e.message }.to_json
