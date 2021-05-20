@@ -7,7 +7,7 @@ module CheckHigh
   # Models a secret assignment
   class Course < Sequel::Model
     many_to_one :owner, class: :'CheckHigh::Account'
-    
+
     one_to_many :assignments
 
     plugin :timestamps
@@ -15,7 +15,7 @@ module CheckHigh
     set_allowed_columns :course_name
 
     plugin :association_dependencies,
-    assignments: :destroy
+           assignments: :destroy
 
     # rubocop:disable Metrics/MethodLength
     def simplify_to_json(options = {})
