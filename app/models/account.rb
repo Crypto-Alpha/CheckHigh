@@ -7,7 +7,6 @@ require_relative './password'
 module CheckHigh
   # Models a dashboard
   class Account < Sequel::Model
-
     one_to_many :owned_share_boards, class: :'CheckHigh::ShareBoard', key: :owner_share_board_id
 
     one_to_many :owned_assignments, class: :'CheckHigh::Assignment', key: :owner_assignment_id
@@ -47,17 +46,16 @@ module CheckHigh
       digest.correct?(try_password)
     end
 
-    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       JSON(
         {
           type: 'account',
-          id: id,
-          username: username,
-          email: email
+          attributes: {
+            username: username,
+            email: email
+          }
         }, options
       )
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

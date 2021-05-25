@@ -57,6 +57,7 @@ def create_owned_share_boards
   end
 end
 
+# rubocop:disable Metrics/MethodLength
 def create_assignments
   assi_info_each = ASSIGNMENT_INFO.each
   courses_cycle = CheckHigh::Course.all.cycle
@@ -70,10 +71,11 @@ def create_assignments
     )
     # Wait for the bug solved for many to many adding problem (ShareBoard cannot related to Assignment)
     CheckHigh::CreateAssiForSrb.call(
-     share_board_id: share_board.id, assignment_data: new_assi
+      share_board_id: share_board.id, assignment_data: new_assi
     )
   end
 end
+# rubocop:enable Metrics/MethodLength
 
 def add_collaborators
   collabor_info = COLLABOR_INFO

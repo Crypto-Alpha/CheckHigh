@@ -23,8 +23,8 @@ module CheckHigh
     set_allowed_columns :share_board_name
 
     plugin :association_dependencies,
-    assignments: :nullify,
-    collaborators: :nullify
+           assignments: :nullify,
+           collaborators: :nullify
 
     # rubocop:disable Metrics/MethodLength
     def simplify_to_json(options = {})
