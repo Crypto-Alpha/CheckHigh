@@ -5,4 +5,3 @@ app/db/store/*.db
 config/secrets.yml
 config/app.yml
 .DS_Store
-
