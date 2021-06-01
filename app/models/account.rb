@@ -13,16 +13,20 @@ module CheckHigh
 
     one_to_many :owned_courses, class: :'CheckHigh::Course', key: :owner_course_id
 
-    plugin :association_dependencies
-    add_association_dependencies owned_share_boards: :destroy, owned_courses: :destroy, owned_assignments: :destroy
-
     many_to_many :collaborations,
                  class: :'CheckHigh::ShareBoard',
                  join_table: :accounts_share_boards,
                  left_key: :collaborator_id, right_key: :share_board_id
 
+    plugin :association_dependencies,
+            owned_share_boards: :destroy, 
+            owned_courses: :destroy, 
+            owned_assignments: :destroy,
+            collaborations: :nullify
+             
     plugin :whitelist_security
     set_allowed_columns :username, :email, :password
+
     plugin :timestamps, update_on_create: true
 
     def courses

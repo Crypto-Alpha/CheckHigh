@@ -82,8 +82,9 @@ def add_collaborators
   collabor_info.each do |collabor|
     share_board = CheckHigh::ShareBoard.first(share_board_name: collabor['share_board_name'])
     collabor['collaborator_email'].each do |email|
-      collaborator = CheckHigh::Account.first(email: email)
-      share_board.add_collaborator(collaborator)
+      CheckHigh::AddCollaboratorToShareBoard.call(
+        email: email, share_board_id: share_board.id
+      )
     end
   end
 end
