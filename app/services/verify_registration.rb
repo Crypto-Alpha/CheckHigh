@@ -63,10 +63,6 @@ module CheckHigh
       mail = mail_setup
       sg = SendGrid::API.new(api_key: mail_key)
       response = sg.client.mail._('send').post(request_body: mail.to_json)
-      # for debugging
-      puts response.status_code
-      puts response.body
-      puts response.headers
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
       raise(InvalidRegistration,
