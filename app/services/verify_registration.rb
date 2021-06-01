@@ -1,6 +1,5 @@
 # frozen_string_literal: true
-
-require 'http'
+require 'sendgrid-ruby'
 
 module CheckHigh
   ## Send email verfification email
@@ -9,19 +8,14 @@ module CheckHigh
   class VerifyRegistration
     # Error for invalid registration details
     class InvalidRegistration < StandardError; end
+    include SendGrid
 
     def initialize(registration)
       @registration = registration
     end
 
     # rubocop:disable Layout/EmptyLineBetweenDefs
-    def mail_key() = ENV['MAILGUN_API_KEY']
-    def mail_domain() = ENV['MAILGUN_DOMAIN']
-    def mail_credentials() = "api:#{mail_key}"
-    def mail_auth() = Base64.strict_encode64(mail_credentials)
-    def mail_url
-      "https://#{mail_credentials}@api.mailgun.net/v3/#{mail_domain}/messages"
-    end
+    def mail_key() = ENV['SENDGRID_API_KEY']
     # rubocop:enable Layout/EmptyLineBetweenDefs
 
     def call
@@ -41,7 +35,7 @@ module CheckHigh
 
     def html_email
       <<~END_EMAIL
-        <H1>CheckHigh App Registration Received</H1>
+        <H2>CheckHigh App Registration Received</H2>
         <p>Please <a href=\"#{@registration[:verification_url]}\">click here</a>
         to validate your email.
         You will be asked to set a password to activate your account.</p>
@@ -57,20 +51,22 @@ module CheckHigh
       END_EMAIL
     end
 
-    def mail_form
-      {
-        from: 'noreply@checkhigh-app.com',
-        to: @registration[:email],
-        subject: 'CheckHigh Registration Verification',
-        text: text_email,
-        html: html_email
-      }
+    def mail_setup
+      from = Email.new(email: 'checkhigh.app@gmail.com')
+      to = Email.new(email: @registration[:email])
+      subject = 'CheckHigh Registration Verification'
+      content = Content.new(type: 'text/html', value: html_email)
+      Mail.new(from, subject, to, content)
     end
 
     def send_email_verification
-      HTTP
-        .auth("Basic #{mail_auth}")
-        .post(mail_url, form: mail_form)
+      mail = mail_setup
+      sg = SendGrid::API.new(api_key: mail_key)
+      response = sg.client.mail._('send').post(request_body: mail.to_json)
+      # for debugging
+      puts response.status_code
+      puts response.body
+      puts response.headers
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
       raise(InvalidRegistration,
