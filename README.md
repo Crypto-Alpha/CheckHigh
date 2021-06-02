@@ -8,6 +8,8 @@ All routes return Json
 
 ### Root
 - GET `/`: Root route shows if Web API is running
+- GET  `api/v1/accounts/[username]`: Get account details
+- POST `api/v1/accounts`: Create a new account
 
 #### Courses
 - GET `api/v1/courses` : returns user's all courses
@@ -22,8 +24,8 @@ TODO:
 #### Share_Boards
 - GET `api/v1/share_boards` : returns user's all share_boards
 - POST `api/v1/share_boards/` : create a new share_boards
-- GET `api/v1/share_boards/[share_board_id]` : returns share_board's all assignments
-- GET `api/v1/share_boards/[share_board_id]/assignments`
+- GET `api/v1/share_boards/[share_board_id]` : returns share_board's information
+- GET `api/v1/share_boards/[share_board_id]/assignments` : returns share_board's all assignments
 - POST `api/v1/share_boards/[share_board_id]/assignments`
 
 TODO:
