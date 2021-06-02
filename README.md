@@ -8,6 +8,8 @@ All routes return Json
 
 ### Root
 - GET `/`: Root route shows if Web API is running
+- GET  `api/v1/accounts/[username]`: Get account details
+- POST `api/v1/accounts`: Create a new account
 
 #### Courses
 - GET `api/v1/courses` : returns user's all courses
