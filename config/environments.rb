@@ -4,7 +4,7 @@ require 'roda'
 require 'figaro'
 require 'logger'
 require 'sequel'
-require './app/lib/secure_db'
+require_app('lib')
 
 module CheckHigh
   # Configuration for the API
@@ -30,10 +30,15 @@ module CheckHigh
       def self.DB() = DB # rubocop:disable Naming/MethodName
     end
     # rubocop:enable Lint/ConstantDefinitionInBlock
-    
+
     configure :development, :test do
       require 'pry'
       logger.level = Logger::ERROR
+    end
+
+    configure do
+      SecureDB.setup(ENV.delete('DB_KEY')) # Load crypto keys
+      AuthToken.setup(ENV.delete('MSG_KEY')) # Load crypto keys
     end
   end
 end

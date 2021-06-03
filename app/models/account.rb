@@ -19,11 +19,11 @@ module CheckHigh
                  left_key: :collaborator_id, right_key: :share_board_id
 
     plugin :association_dependencies,
-            owned_share_boards: :destroy, 
-            owned_courses: :destroy, 
-            owned_assignments: :destroy,
-            collaborations: :nullify
-             
+           owned_share_boards: :destroy,
+           owned_courses: :destroy,
+           owned_assignments: :destroy,
+           collaborations: :nullify
+
     plugin :whitelist_security
     set_allowed_columns :username, :email, :password
 
