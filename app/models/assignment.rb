@@ -41,15 +41,13 @@ module CheckHigh
       # for only showing assignment id & name
       JSON(
         {
-          data: {
-            type: 'assignment',
-            attributes: {
-              id: id,
-              assignment_name: assignment_name,
-              links: {
-                rel: 'assignment_details',
-                href: "#{Api.config.API_HOST}/api/v1/assignments/#{id}"
-              }
+          type: 'assignment',
+          attributes: {
+            id: id,
+            assignment_name: assignment_name,
+            links: {
+              rel: 'assignment_details',
+              href: "#{Api.config.API_HOST}/api/v1/assignments/#{id}"
             }
           }
         }, options
@@ -62,13 +60,11 @@ module CheckHigh
       # for showing assignment details or create a new assignment
       JSON(
         {
-          data: {
-            type: 'assignment',
-            attributes: {
-              id: id,
-              assignment_name: assignment_name,
-              content: content
-            }
+          type: 'assignment',
+          attributes: {
+            id: id,
+            assignment_name: assignment_name,
+            content: content
           }
         }, options
       )
