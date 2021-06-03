@@ -10,12 +10,11 @@ module CheckHigh
       # GET api/v1/courses
       routing.is do
         routing.get do
-          courses = Course.all.map do |each_course|
-            ret = JSON.parse(each_course.simplify_to_json)
-            ret['data']['attributes']
-          end
-          output = { data: courses }
-          JSON.pretty_generate(output)
+          
+          account = Account.first(username: @auth_account['username'])
+          # TODO_0603: don't know how to use the function simplify_to_json
+          courses = account.courses
+          JSON.pretty_generate(data: courses)
         rescue StandardError
           routing.halt 404, { message: 'Could not find any course' }.to_json
         end
