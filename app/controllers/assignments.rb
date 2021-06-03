@@ -7,17 +7,13 @@ module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
     route('assignments') do |routing|
-      # this path will get assignments which are not belongs to any course
-      # not sure if logic is right, need to make sure with Soumya
       # GET api/v1/assignments
       routing.is do
         routing.get do
-          assignments = Assignment.where(course_id: nil).all.map do |each_assignment|
-            ret = JSON.parse(each_assignment.simplify_to_json)
-            ret['data']['attributes']
-          end
-          output = { data: assignments }
-          JSON.pretty_generate(output)
+          account = Account.first(username: @auth_account['username'])
+          # assignments = account.assignments
+          not_belong_assi = Assignment.where(owner_assignment_id: account.id, course_id: nil).all
+          JSON.pretty_generate(data: not_belong_assi)
         rescue StandardError
           routing.halt 404, { message: 'Could not find any assignment without a course folder' }.to_json
         end
@@ -43,9 +39,9 @@ module CheckHigh
 
       # GET api/v1/assignments/[assignment_id]
       routing.get String do |assignment_id|
-        assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)['data']['attributes']
-        output = { data: assignment }
-        JSON.pretty_generate(output)
+        account = Account.first(username: @auth_account['username'])
+        assi = Assignment.find(id: assignment_id)
+        JSON.pretty_generate(data: assi)
       rescue StandardError
         routing.halt 404, { message: 'Could not find assignment detail' }.to_json
       end

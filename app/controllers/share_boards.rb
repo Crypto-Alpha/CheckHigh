@@ -10,12 +10,15 @@ module CheckHigh
       # GET api/v1/share_boards
       routing.is do
         routing.get do
-          share_boards = ShareBoard.all.map do |share_board|
-            ret = JSON.parse(share_board.simplify_to_json)
-            ret['data']['attributes']
+          account = Account.first(username: @auth_account['username'])
+          # get all srb include owned and collaboration
+          share_boards_all = account.share_boards
+          # get owned srb (have not used)
+          share_boards_owned = share_boards_all.map do |srb|
+            srb if srb.owner_share_board_id == account.id
           end
-          output = { data: share_boards }
-          JSON.pretty_generate(output)
+
+          JSON.pretty_generate(data: share_boards_all)
         rescue StandardError
           routing.halt 404, { message: 'Could not find any share board' }.to_json
         end
@@ -51,9 +54,10 @@ module CheckHigh
         routing.on 'assignments' do
           # GET api/v1/share_boards/[share_board_id]/assignments
           routing.get do
-            share_board = ShareBoard.first(id: share_board_id)
-            output = { data: share_board.assignments }
-            JSON.pretty_generate(output)
+            # account = Account.first(username: @auth_account['username'])
+            share_board = ShareBoard.find(id: share_board_id)
+            assignments = share_board.assignments
+            JSON.pretty_generate(data: assignments)
           rescue StandardError
             routing.halt 404, { message: 'Could not find any related assignments for this share board' }.to_json
           end

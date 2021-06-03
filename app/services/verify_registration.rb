@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'sendgrid-ruby'
 
 module CheckHigh
@@ -14,9 +15,7 @@ module CheckHigh
       @registration = registration
     end
 
-    # rubocop:disable Layout/EmptyLineBetweenDefs
     def mail_key() = ENV['SENDGRID_API_KEY']
-    # rubocop:enable Layout/EmptyLineBetweenDefs
 
     def call
       raise(InvalidRegistration, 'Username exists') unless username_available?
@@ -62,7 +61,8 @@ module CheckHigh
     def send_email_verification
       mail = mail_setup
       sg = SendGrid::API.new(api_key: mail_key)
-      response = sg.client.mail._('send').post(request_body: mail.to_json)
+      # response = sg.client.mail._('send').post(request_body: mail.to_json)
+      sg.client.mail._('send').post(request_body: mail.to_json)
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
       raise(InvalidRegistration,
