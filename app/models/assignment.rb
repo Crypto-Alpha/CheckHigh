@@ -44,7 +44,8 @@ module CheckHigh
           attributes: {
             id: id,
             assignment_name: assignment_name,
-            content: content
+            content: content,
+            upload_time: created_at
           }
         }, options
       )
