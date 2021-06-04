@@ -9,7 +9,7 @@ require_relative 'securable'
 #  AuthToken.payload(token)   # => {"key"=>"value", "key2"=>12}
 class AuthToken
   extend Securable
-  
+
   ONE_HOUR = 60 * 60
   ONE_DAY = ONE_HOUR * 24
   ONE_WEEK = ONE_DAY * 7

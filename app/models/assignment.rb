@@ -55,7 +55,6 @@ module CheckHigh
     end
     # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       # for showing assignment details or create a new assignment
       JSON(
@@ -69,6 +68,5 @@ module CheckHigh
         }, options
       )
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

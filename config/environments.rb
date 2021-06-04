@@ -30,7 +30,7 @@ module CheckHigh
       def self.DB() = DB # rubocop:disable Naming/MethodName
     end
     # rubocop:enable Lint/ConstantDefinitionInBlock
-    
+
     configure :development, :test do
       require 'pry'
       logger.level = Logger::ERROR
