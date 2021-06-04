@@ -11,9 +11,14 @@ module CheckHigh
       routing.is do
         routing.get do
           account = Account.first(username: @auth_account['username'])
-          # TODO_0603: don't know how to use the function simplify_to_json
-          share_boards = ShareBoard.where(owner_share_board_id: account.id).all
-          JSON.pretty_generate(data: share_boards)
+          # get all srb include owned and collaboration
+          share_boards_all = account.share_boards
+          # get owned srb (have not used)
+          share_boards_owned = share_boards_all.map do |srb|
+            srb if srb.owner_share_board_id == account.id
+          end
+
+          JSON.pretty_generate(data: share_boards_all)
         rescue StandardError
           routing.halt 404, { message: 'Could not find any share board' }.to_json
         end
