@@ -36,25 +36,6 @@ module CheckHigh
       self.content_secure = SecureDB.encrypt(plaintext)
     end
 
-    # rubocop:disable Metrics/MethodLength
-    def simplify_to_json(options = {})
-      # for only showing assignment id & name
-      JSON(
-        {
-          type: 'assignment',
-          attributes: {
-            id: id,
-            assignment_name: assignment_name,
-            links: {
-              rel: 'assignment_details',
-              href: "#{Api.config.API_HOST}/api/v1/assignments/#{id}"
-            }
-          }
-        }, options
-      )
-    end
-    # rubocop:enable Metrics/MethodLength
-
     def to_json(options = {})
       # for showing assignment details or create a new assignment
       JSON(

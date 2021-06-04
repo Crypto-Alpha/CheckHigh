@@ -11,7 +11,6 @@ module CheckHigh
       routing.is do
         routing.get do
           account = Account.first(username: @auth_account['username'])
-          # TODO_0603: don't know how to use the function simplify_to_json
           courses = account.courses
           JSON.pretty_generate(data: courses)
         rescue StandardError
