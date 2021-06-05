@@ -6,7 +6,10 @@ Sequel.seed(:development) do
     create_accounts
     create_owned_courses
     create_owned_share_boards
-    create_assignments
+    create_owned_assignments
+    create_course_assignments
+    create_shareboard_assignments
+    #create_assignments
     add_collaborators
   end
 end
@@ -18,6 +21,7 @@ OWNER_COURSES_INFO = YAML.load_file("#{DIR}/owners_courses.yml")
 COURSE_INFO = YAML.load_file("#{DIR}/course_seeds.yml")
 OWNER_SHAREBOARDS_INFO = YAML.load_file("#{DIR}/owners_share_boards.yml")
 SHARE_BOARD_INFO = YAML.load_file("#{DIR}/share_board_seeds.yml")
+OWNER_ASSIGNMENTS_INFO = YAML.load_file("#{DIR}/owners_assignments.yml")
 ASSIGNMENT_INFO = YAML.load_file("#{DIR}/assignment_seeds.yml")
 COLLABOR_INFO = YAML.load_file("#{DIR}/share_boards_collaborators.yml")
 
@@ -32,11 +36,8 @@ def create_owned_courses
     account = CheckHigh::Account.first(username: owner['username'])
     owner['course_name'].each do |course_name|
       course_data = COURSE_INFO.find { |course| course['course_name'] == course_name }
-      # this could change to service obj
-      # see soumya's create_project_for_owner.rb
-      # CheckHigh::Account.find(id: account.id).add_owned_course(course_data)
-      CheckHigh::CreateCourseForAccount.call(
-        account_id: account.id, course_data: course_data
+      CheckHigh::CreateCourseForOwner.call(
+        owner_id: account.id, course_data: course_data
       )
     end
   end
@@ -47,19 +48,54 @@ def create_owned_share_boards
     account = CheckHigh::Account.first(username: owner['username'])
     owner['share_board_name'].each do |share_board_name|
       srb_data = SHARE_BOARD_INFO.find { |srb| srb['share_board_name'] == share_board_name }
-      # this could change to service obj
-      # see soumya's create_project_for_owner.rb
-      # CheckHigh::Account.find(id: account.id).add_owned_share_board(srb_data)
-      CheckHigh::CreateShareBoardForAccount.call(
-        account_id: account.id, shareboard_data: srb_data
+      CheckHigh::CreateShareBoardForOwner.call(
+        owner_id: account.id, share_board_data: srb_data
       )
     end
   end
 end
 
+def create_owned_assignments
+  OWNER_ASSIGNMENTS_INFO.each do |owner|
+    account = CheckHigh::Account.first(username: owner['username'])
+    owner['assignment_name'].each do |assignment_name|
+      assi_data = ASSIGNMENT_INFO.find { |assi| assi['assignment_name'] == assignment_name }
+      CheckHigh::CreateAssignmentForOwner.call(
+        owner_id: account.id, assignment_data: assi_data
+      )
+    end
+  end
+end
+
+def create_course_assignments
+  assi_info = CheckHigh::Assignment.all
+  courses_cycle = CheckHigh::Course.all
+  courses_cycle.each do |course|
+    assi_data = assi_info.find { |assi| assi.owner_assignment_id == course.owner_course_id }
+    if !assi_data.nil?
+      CheckHigh::CreateAssiForCourse.call(
+      course_id: course.id, assignment_data: assi_data
+      )
+    end
+  end
+end
+
+def create_shareboard_assignments
+  assi_info_each = CheckHigh::Assignment.cycle
+  share_boards_cycle = CheckHigh::ShareBoard.all.cycle
+  3.times do 
+    assi_info = assi_info_each.next
+    share_board = share_boards_cycle.next
+    CheckHigh::CreateAssiForSrb.call(
+      share_board_id: share_board.id, assignment_data: assi_info
+    )
+  end
+end
+
 # rubocop:disable Metrics/MethodLength
 def create_assignments
-  assi_info_each = ASSIGNMENT_INFO.each
+  # assi_info_each = ASSIGNMENT_INFO.each
+  assi_info_each = CheckHigh::Assignment.cycle
   courses_cycle = CheckHigh::Course.all.cycle
   share_boards_cycle = CheckHigh::ShareBoard.all.cycle
   loop do
