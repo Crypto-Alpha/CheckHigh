@@ -54,9 +54,10 @@ module CheckHigh
         routing.on 'assignments' do
           # GET api/v1/share_boards/[share_board_id]/assignments
           routing.get do
-            share_board = ShareBoard.first(id: share_board_id)
-            output = { data: share_board.assignments }
-            JSON.pretty_generate(output)
+            # account = Account.first(username: @auth_account['username'])
+            share_board = ShareBoard.find(id: share_board_id)
+            assignments = share_board.assignments
+            JSON.pretty_generate(data: assignments)
           rescue StandardError
             routing.halt 404, { message: 'Could not find any related assignments for this share board' }.to_json
           end

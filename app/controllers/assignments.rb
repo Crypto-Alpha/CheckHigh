@@ -39,9 +39,9 @@ module CheckHigh
 
       # GET api/v1/assignments/[assignment_id]
       routing.get String do |assignment_id|
-        assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)['data']['attributes']
-        output = { data: assignment }
-        JSON.pretty_generate(output)
+        account = Account.first(username: @auth_account['username'])
+        assi = Assignment.find(id: assignment_id)
+        JSON.pretty_generate(data: assi)
       rescue StandardError
         routing.halt 404, { message: 'Could not find assignment detail' }.to_json
       end
