@@ -22,16 +22,14 @@ module CheckHigh
       # for only showing course id & name
       JSON(
         {
-          data: {
-            type: 'course',
-            attributes: {
-              id: id,
-              course_name: course_name,
-              links: {
-                rel: 'course_details',
-                # this link relates to course details
-                href: "#{Api.config.API_HOST}/api/v1/courses/#{id}"
-              }
+          type: 'course',
+          attributes: {
+            id: id,
+            course_name: course_name,
+            links: {
+              rel: 'course_details',
+              # this link relates to course details
+              href: "#{Api.config.API_HOST}/api/v1/courses/#{id}"
             }
           }
         }, options
@@ -44,16 +42,14 @@ module CheckHigh
       # for showing course details & related assignment link or creating related
       JSON(
         {
-          data: {
-            type: 'course',
-            attributes: {
-              id: id,
-              course_name: course_name,
-              links: {
-                rel: 'assignment_details',
-                # this should show assignments(only id & name) related to this course
-                href: "#{Api.config.API_HOST}/api/v1/courses/#{id}/assignments"
-              }
+          type: 'course',
+          attributes: {
+            id: id,
+            course_name: course_name,
+            links: {
+              rel: 'assignment_details',
+              # this should show assignments(only id & name) related to this course
+              href: "#{Api.config.API_HOST}/api/v1/courses/#{id}/assignments"
             }
           }
         }, options
