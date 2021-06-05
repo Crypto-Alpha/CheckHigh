@@ -43,7 +43,7 @@ module CheckHigh
         assi = Assignment.find(id: assignment_id)
         JSON.pretty_generate(data: assi)
       rescue StandardError
-        routing.halt 404, { message: 'Could not find assignment detail' }.to_json
+        routing.halt 404, { message: 'Could not find assignment details' }.to_json
       end
     end
   end
