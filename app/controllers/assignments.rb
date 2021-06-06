@@ -11,10 +11,9 @@ module CheckHigh
       routing.is do
         routing.get do
           account = Account.first(username: @auth_account['username'])
-          # TODO_0603: don't know how to use the function simplify_to_json
           # assignments = account.assignments
-          not_belong_assignments = Assignment.where(owner_assignment_id: account.id, course_id: nil).all
-          JSON.pretty_generate(data: not_belong_assignments)
+          not_belong_assi = Assignment.where(owner_assignment_id: account.id, course_id: nil).all
+          JSON.pretty_generate(data: not_belong_assi)
         rescue StandardError
           routing.halt 404, { message: 'Could not find any assignment without a course folder' }.to_json
         end
@@ -40,11 +39,11 @@ module CheckHigh
 
       # GET api/v1/assignments/[assignment_id]
       routing.get String do |assignment_id|
-        assignment = JSON.parse(Assignment.find(id: assignment_id).to_json)['data']['attributes']
-        output = { data: assignment }
-        JSON.pretty_generate(output)
+        account = Account.first(username: @auth_account['username'])
+        assi = Assignment.find(id: assignment_id)
+        JSON.pretty_generate(data: assi)
       rescue StandardError
-        routing.halt 404, { message: 'Could not find assignment detail' }.to_json
+        routing.halt 404, { message: 'Could not find assignment details' }.to_json
       end
     end
   end

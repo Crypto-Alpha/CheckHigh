@@ -8,19 +8,42 @@ describe 'Test ShareBoards Handling' do
 
   before do
     wipe_database
-
     DATA[:share_boards][0..2].each do |share_board_data|
       CheckHigh::ShareBoard.create(share_board_data)
     end
   end
 
   describe 'Getting ShareBoards' do
-    it 'HAPPY: should be able to get list of share_boards' do
-      get 'api/v1/share_boards'
-      _(last_response.status).must_equal 200
+    describe 'Getting list of ShareBoards' do
+      before do
+        @account_data = DATA[:accounts][0]
+        account = CheckHigh::Account.create(@account_data)
+        account.add_owned_share_board(DATA[:share_boards][0])
+        account.add_owned_share_board(DATA[:share_boards][1])
+      end
 
-      result = JSON.parse last_response.body
-      _(result['data'].count).must_equal 3
+      it 'HAPPY: should get list of share_boards for authorized account' do
+        auth = CheckHigh::AuthenticateAccount.call(
+          username: @account_data['username'],
+          password: @account_data['password']
+        )
+
+        header 'AUTHORIZATION', "Bearer #{auth[:attributes][:auth_token]}"
+        get 'api/v1/share_boards'
+        _(last_response.status).must_equal 200
+
+        result = JSON.parse last_response.body
+        _(result['data'].count).must_equal 2
+      end
+
+      it 'BAD: should not process for unauthorized account' do
+        header 'AUTHORIZATION', 'Bearer bad_token'
+        get 'api/v1/share_boards'
+        _(last_response.status).must_equal 403
+
+        result = JSON.parse last_response.body
+        _(result['data']).must_be_nil
+      end
     end
 
     it 'HAPPY: should be able to get details of a specific share_board' do
@@ -31,9 +54,9 @@ describe 'Test ShareBoards Handling' do
       _(last_response.status).must_equal 200
 
       result = JSON.parse last_response.body
-      _(result['data']['id']).must_equal srb.id
-      _(result['data']['share_board_name']).must_equal srb.share_board_name
-      _(result['data']['links']['href']).must_include "share_boards/#{srb.id}/assignments"
+      _(result['id']).must_equal srb.id
+      _(result['share_board_name']).must_equal srb.share_board_name
+      _(result['links']['href']).must_include "share_boards/#{srb.id}/assignments"
     end
 
     # this will related to some foreign key constraint problem
@@ -83,7 +106,7 @@ describe 'Test ShareBoards Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       srb = srb_orm.last
 
       _(created['id']).must_equal srb.id

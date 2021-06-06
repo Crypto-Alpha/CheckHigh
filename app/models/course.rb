@@ -18,26 +18,6 @@ module CheckHigh
            assignments: :destroy
 
     # rubocop:disable Metrics/MethodLength
-    def simplify_to_json(options = {})
-      # for only showing course id & name
-      JSON(
-        {
-          type: 'course',
-          attributes: {
-            id: id,
-            course_name: course_name,
-            links: {
-              rel: 'course_details',
-              # this link relates to course details
-              href: "#{Api.config.API_HOST}/api/v1/courses/#{id}"
-            }
-          }
-        }, options
-      )
-    end
-    # rubocop:enable Metrics/MethodLength
-
-    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       # for showing course details & related assignment link or creating related
       JSON(
