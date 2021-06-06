@@ -9,7 +9,6 @@ Sequel.seed(:development) do
     create_owned_assignments
     create_course_assignments
     create_shareboard_assignments
-    #create_assignments
     add_collaborators
   end
 end
@@ -74,16 +73,16 @@ def create_course_assignments
     assi_data = assi_info.find { |assi| assi.owner_assignment_id == course.owner_course_id }
     if !assi_data.nil?
       CheckHigh::CreateAssiForCourse.call(
-      course_id: course.id, assignment_data: assi_data
+        course_id: course.id, assignment_data: assi_data
       )
     end
   end
 end
 
 def create_shareboard_assignments
-  assi_info_each = CheckHigh::Assignment.cycle
+  assi_info_each = CheckHigh::Assignment.all.cycle
   share_boards_cycle = CheckHigh::ShareBoard.all.cycle
-  3.times do 
+  4.times do 
     assi_info = assi_info_each.next
     share_board = share_boards_cycle.next
     CheckHigh::CreateAssiForSrb.call(
@@ -91,27 +90,6 @@ def create_shareboard_assignments
     )
   end
 end
-
-# rubocop:disable Metrics/MethodLength
-def create_assignments
-  # assi_info_each = ASSIGNMENT_INFO.each
-  assi_info_each = CheckHigh::Assignment.cycle
-  courses_cycle = CheckHigh::Course.all.cycle
-  share_boards_cycle = CheckHigh::ShareBoard.all.cycle
-  loop do
-    assi_info = assi_info_each.next
-    course = courses_cycle.next
-    share_board = share_boards_cycle.next
-    new_assi = CheckHigh::CreateAssiForCourse.call(
-      course_id: course.id, assignment_data: assi_info
-    )
-    # Wait for the bug solved for many to many adding problem (ShareBoard cannot related to Assignment)
-    CheckHigh::CreateAssiForSrb.call(
-      share_board_id: share_board.id, assignment_data: new_assi
-    )
-  end
-end
-# rubocop:enable Metrics/MethodLength
 
 def add_collaborators
   collabor_info = COLLABOR_INFO
