@@ -27,26 +27,6 @@ module CheckHigh
            collaborators: :nullify
 
     # rubocop:disable Metrics/MethodLength
-    def simplify_to_json(options = {})
-      # for only showing share_board id & name
-      JSON(
-        {
-          type: 'share_board',
-          attributes: {
-            id: id,
-            share_board_name: share_board_name,
-            links: {
-              rel: 'share_board_details',
-              # this link relates to share_board details
-              href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}"
-            }
-          }
-        }, options
-      )
-    end
-    # rubocop:enable Metrics/MethodLength
-
-    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       JSON(
         {
