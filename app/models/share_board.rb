@@ -26,22 +26,33 @@ module CheckHigh
            assignments: :nullify,
            collaborators: :nullify
 
-    # rubocop:disable Metrics/MethodLength
-    def to_json(options = {})
-      JSON(
-        {
-          type: 'share_board',
-          attributes: {
-            id: id,
-            share_board_name: share_board_name,
-            links: {
-              rel: 'assignment_details',
-              # this should show assignments(only id & name) related to this share_board
-              href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}/assignments"
-            }
+    def to_h
+      {
+        type: 'share_board',
+        attributes: {
+          id: id,
+          share_board_name: share_board_name,
+          links: {
+            rel: 'assignment_details',
+            # this should show assignments(only id & name) related to this share_board
+            href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}/assignments"
           }
-        }, options
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          owner: owner,
+          collaborators: collaborators,
+          assignments: assignments
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON( to_h, options )
     end
     # rubocop:enable Metrics/MethodLength
   end

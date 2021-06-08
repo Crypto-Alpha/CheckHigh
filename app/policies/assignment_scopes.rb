@@ -45,5 +45,26 @@ module CheckHigh
         course.assignments
       end
     end
+    # Scope of share_board policies
+    class ShareBoardScope
+      def initialize(current_share_board, target_share_board = nil)
+        target_share_board ||= current_share_board
+        @full_scope = all_assignments(target_share_board)
+        @current_share_board = current_share_board
+        @target_share_board = target_share_board
+      end
+
+      def viewable
+        if @current_share_board == @target_share_board
+          @full_scope
+        end
+      end
+
+      private
+
+      def all_assignments(share_board)
+        share_board.assignments
+      end
+    end
   end
 end

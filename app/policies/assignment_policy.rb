@@ -8,8 +8,9 @@ module CheckHigh
       @assignment = assignment
     end
 
+    # collaborator only can VIEW the other's assignment
     def can_view?
-      account_owns_assignment?
+      account_owns_assignment? || account_collaborates_on_share_board?
     end
 
     def can_edit?
@@ -32,6 +33,10 @@ module CheckHigh
 
     def account_owns_assignment?
       @assignment.owner_assignment_id == @account.id
+    end
+
+    def account_collaborates_on_share_board?
+      @assignment.share_board.collaborators.include?(@account)
     end
   end
 end
