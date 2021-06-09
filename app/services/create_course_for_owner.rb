@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: not sure the logic is right or not.
 module CheckHigh
   # Create new course for an owner
   class CreateCourseForOwner
