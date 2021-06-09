@@ -1,0 +1,27 @@
+---
+- username: soumya.ray
+  assignment_name:
+    - hw1
+    - hw2
+
+- username: furen
+  assignment_name:
+    - hw3
+
+- username: galit
+  assignment_name:
+    - hw4
+
+- username: rona
+  assignment_name:
+    - hw5
+
+- username: yanyu
+  assignment_name:
+    - hw6
+    - hw7
+
+- username: riley
+  assignment_name:
+    - hw8
+    - hw9

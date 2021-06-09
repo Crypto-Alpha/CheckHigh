@@ -15,12 +15,36 @@ describe 'Test Course Handling' do
   end
 
   describe 'Getting Courses' do
-    it 'HAPPY: should be able to get list of courses' do
-      get 'api/v1/courses'
-      _(last_response.status).must_equal 200
+    describe 'Getting list of Courses' do
+      before do
+        @account_data = DATA[:accounts][0]
+        account = CheckHigh::Account.create(@account_data)
+        account.add_owned_course(DATA[:courses][0])
+        account.add_owned_course(DATA[:courses][1])
+      end
 
-      result = JSON.parse last_response.body
-      _(result['data'].count).must_equal 3
+      it 'HAPPY: should get list of courses for authorized account' do
+        auth = CheckHigh::AuthenticateAccount.call(
+          username: @account_data['username'],
+          password: @account_data['password']
+        )
+
+        header 'AUTHORIZATION', "Bearer #{auth[:attributes][:auth_token]}"
+        get 'api/v1/courses'
+        _(last_response.status).must_equal 200
+
+        result = JSON.parse last_response.body
+        _(result['data'].count).must_equal 2
+      end
+
+      it 'BAD: should not process for unauthorized account' do
+        header 'AUTHORIZATION', 'Bearer bad_token'
+        get 'api/v1/courses'
+        _(last_response.status).must_equal 403
+
+        result = JSON.parse last_response.body
+        _(result['data']).must_be_nil
+      end
     end
 
     it 'HAPPY: should be able to get details of a specific course' do
@@ -31,9 +55,9 @@ describe 'Test Course Handling' do
       _(last_response.status).must_equal 200
 
       result = JSON.parse last_response.body
-      _(result['data']['id']).must_equal crs.id
-      _(result['data']['course_name']).must_equal crs.course_name
-      _(result['data']['links']['href']).must_include "courses/#{crs.id}/assignments"
+      _(result['id']).must_equal crs.id
+      _(result['course_name']).must_equal crs.course_name
+      _(result['links']['href']).must_include "courses/#{crs.id}/assignments"
     end
 
     it 'HAPPY: should return the right number of assignments related to a specific course' do
@@ -79,7 +103,7 @@ describe 'Test Course Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       crs = crs_orm.last
 
       _(created['id']).must_equal crs.id

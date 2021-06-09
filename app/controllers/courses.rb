@@ -11,7 +11,6 @@ module CheckHigh
       routing.is do
         routing.get do
           account = Account.first(username: @auth_account['username'])
-          # TODO_0603: don't know how to use the function simplify_to_json
           courses = account.courses
           JSON.pretty_generate(data: courses)
         rescue StandardError
@@ -48,9 +47,10 @@ module CheckHigh
         routing.on 'assignments' do
           # GET api/v1/courses/[course_id]/assignments
           routing.get do
-            course = Course.first(id: course_id)
-            output = { data: course.assignments }
-            JSON.pretty_generate(output)
+            # account = Account.first(username: @auth_account['username'])
+            course = Course.find(id: course_id)
+            assignments = course.assignments
+            JSON.pretty_generate(data: assignments)
           rescue StandardError
             routing.halt 404, { message: 'Could not find any related assignments for this course' }.to_json
           end
