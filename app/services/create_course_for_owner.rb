@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require_relative '../policies/account_policy'
 
+# TODO: not sure the logic is right or not.
 module CheckHigh
   # Create new course for an owner
   class CreateCourseForOwner
