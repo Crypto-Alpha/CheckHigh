@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../policies/course_policy'
 
 module CheckHigh
   # Create new assignments for a share board

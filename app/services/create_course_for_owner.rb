@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../policies/account_policy'
 
 module CheckHigh
   # Create new course for an owner
