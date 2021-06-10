@@ -62,7 +62,7 @@ module CheckHigh
     private
 
     def account_is_owner?
-      @share_board.owner_share_board_id == @account.id
+      @share_board.owner_id == @account.id
     end
 
     def account_is_collaborator?

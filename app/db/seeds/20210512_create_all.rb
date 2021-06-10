@@ -73,9 +73,9 @@ def create_course_assignments
   assi_info = CheckHigh::Assignment.all
   courses_cycle = CheckHigh::Course.all
   courses_cycle.each do |course|
-    assi_data = assi_info.find { |assi| assi.owner_assignment_id == course.owner_course_id }
+    assi_data = assi_info.find { |assi| assi.owner_id == course.owner_id }
     if !assi_data.nil?
-      owner = CheckHigh::Account.find(id: course.owner_course_id)
+      owner = CheckHigh::Account.find(id: course.owner_id)
       CheckHigh::CreateAssiForCourse.call(
         account: owner, course: course, assignment_data: assi_data
       )
@@ -91,7 +91,7 @@ def create_shareboard_assignments
     share_board = share_boards_cycle.next
     # 這邊應該collaborator或owner都可以新增assignment
     # 為了方便這邊用owner的account data
-    owner = CheckHigh::Account.find(id: share_board.owner_share_board_id)
+    owner = CheckHigh::Account.find(id: share_board.owner_id)
     CheckHigh::CreateAssiForSrb.call(
       account: owner, share_board: share_board, assignment_data: assi_info
     )
@@ -103,7 +103,7 @@ def add_collaborators
   collabor_info.each do |collabor|
     share_board = CheckHigh::ShareBoard.first(share_board_name: collabor['share_board_name'])
     collabor['collaborator_email'].each do |email|
-      owner = CheckHigh::Account.first(id: share_board.owner_share_board_id) 
+      owner = CheckHigh::Account.first(id: share_board.owner_id) 
       CheckHigh::AddCollaborator.call(
         account: owner, share_board: share_board, collab_email: email
       )
