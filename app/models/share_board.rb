@@ -44,7 +44,7 @@ module CheckHigh
     def full_details
       to_h.merge(
         relationships: {
-          owner: owner,
+          owner: Account.find(owner_share_board_id).first,
           collaborators: collaborators,
           assignments: assignments
         }
