@@ -4,14 +4,15 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:dashboards) do
+    create_table(:accounts) do
       primary_key :id
 
-      String :dashboard_name, null: false
+      String :username, null: false, unique: true
+      String :email, null: false, unique: true
+      String :password_digest
 
       DateTime :created_at
       DateTime :updated_at
-
     end
   end
 end

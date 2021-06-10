@@ -21,7 +21,7 @@ describe 'Test Assignment Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data'].count).must_equal assignments.count
+    _(result.count).must_equal assignments.count
   end
 
   it 'HAPPY: should be able to get details of a specific assignment' do
@@ -32,9 +32,9 @@ describe 'Test Assignment Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['id']).must_equal assi.id
-    _(result['data']['assignment_name']).must_equal assi.assignment_name
-    _(result['data']['content']).must_equal assi.content
+    _(result['id']).must_equal assi.id
+    _(result['assignment_name']).must_equal assi.assignment_name
+    _(result['content']).must_equal assi.content
   end
 
   it 'SAD: should return error if unknown assignment requested' do
@@ -53,7 +53,7 @@ describe 'Test Assignment Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       assi = assi_orm.order(:created_at).last
 
       _(created['id']).must_equal assi.id
@@ -64,7 +64,7 @@ describe 'Test Assignment Handling' do
     it 'SECURITY: should not create assignments with mass_assignment' do
       bad_data = @assi_data.clone
       bad_data['created_at'] = '1900-01-01'
-      post 'api/v1/assignments',bad_data.to_json, @req_header
+      post 'api/v1/assignments', bad_data.to_json, @req_header
 
       _(last_response.status).must_equal 400
       _(last_response.header['Location']).must_be_nil
