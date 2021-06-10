@@ -24,7 +24,7 @@ module CheckHigh
       policy = CoursePolicy.new(account, course)
       raise ForbiddenError unless policy.can_view?
 
-      course
+      course.full_details.merge(policies: policy.summary)
     end
   end
 end
