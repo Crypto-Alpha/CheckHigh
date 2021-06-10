@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../policies/collaboration_request_policy'
 
 module CheckHigh
   # Add a collaborator to another owner's existing share_board

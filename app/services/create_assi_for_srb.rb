@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../policies/share_board_policy'
 
 module CheckHigh
   # Create new assignments for a share board
@@ -19,7 +20,7 @@ module CheckHigh
 
     def self.call(account:, share_board:, assignment_data:)
       policy = ShareBoardPolicy.new(account, share_board)
-      raise ForbiddenError unless policy.can_add_documents?
+      raise ForbiddenError unless policy.can_add_assignments?
 
       add_assignment(share_board, assignment_data)
     end
