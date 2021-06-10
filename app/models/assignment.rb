@@ -43,6 +43,8 @@ module CheckHigh
           type: 'assignment',
           attributes: {
             id: id,
+            owner_id: owner_id,
+            owner_name: owner.username,
             assignment_name: assignment_name,
             content: content,
             upload_time: created_at

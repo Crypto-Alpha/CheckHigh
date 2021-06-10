@@ -41,7 +41,7 @@ module CheckHigh
     private
 
     def account_is_owner?
-      @course.owner_course_id == @account.id
+      @course.owner_id == @account.id
     end
   end
 end

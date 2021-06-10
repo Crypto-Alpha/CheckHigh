@@ -32,7 +32,7 @@ module CheckHigh
     private
 
     def account_owns_assignment?
-      @assignment.owner_assignment_id == @account.id
+      @assignment.owner_id == @account.id
     end
 
     def account_collaborates_on_share_board?
