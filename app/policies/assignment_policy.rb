@@ -36,7 +36,10 @@ module CheckHigh
     end
 
     def account_collaborates_on_share_board?
-      @assignment.share_board.collaborators.include?(@account)
+      @assignment.share_boards.each do |srb|
+        return true if srb.collaborators.include?(@account)
+      end
+      false
     end
   end
 end
