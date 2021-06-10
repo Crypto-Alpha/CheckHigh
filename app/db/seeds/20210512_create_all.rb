@@ -36,7 +36,8 @@ def create_owned_courses
     owner['course_name'].each do |course_name|
       course_data = COURSE_INFO.find { |course| course['course_name'] == course_name }
       CheckHigh::CreateCourseForOwner.call(
-        owner_id: account.id, course_data: course_data
+        # new service logic
+        account: account, course_data: course_data
       )
     end
   end
@@ -48,6 +49,7 @@ def create_owned_share_boards
     owner['share_board_name'].each do |share_board_name|
       srb_data = SHARE_BOARD_INFO.find { |srb| srb['share_board_name'] == share_board_name }
       CheckHigh::CreateShareBoardForOwner.call(
+        #TODO: new service logic not added
         owner_id: account.id, share_board_data: srb_data
       )
     end
@@ -59,8 +61,9 @@ def create_owned_assignments
     account = CheckHigh::Account.first(username: owner['username'])
     owner['assignment_name'].each do |assignment_name|
       assi_data = ASSIGNMENT_INFO.find { |assi| assi['assignment_name'] == assignment_name }
-      CheckHigh::CreateAssignmentForOwner.call(
-        owner_id: account.id, assignment_data: assi_data
+      CheckHigh::CreateAssiForOwner.call(
+        # new service logic
+        account: account, assignment_data: assi_data
       )
     end
   end
@@ -72,8 +75,9 @@ def create_course_assignments
   courses_cycle.each do |course|
     assi_data = assi_info.find { |assi| assi.owner_assignment_id == course.owner_course_id }
     if !assi_data.nil?
+      owner = CheckHigh::Account.find(id: course.owner_course_id)
       CheckHigh::CreateAssiForCourse.call(
-        course_id: course.id, assignment_data: assi_data
+        account: owner, course: course, assignment_data: assi_data
       )
     end
   end
@@ -85,8 +89,11 @@ def create_shareboard_assignments
   4.times do 
     assi_info = assi_info_each.next
     share_board = share_boards_cycle.next
+    # 這邊應該collaborator或owner都可以新增assignment
+    # 為了方便這邊用owner的account data
+    owner = CheckHigh::Account.find(id: share_board.owner_share_board_id)
     CheckHigh::CreateAssiForSrb.call(
-      share_board_id: share_board.id, assignment_data: assi_info
+      account: owner, share_board: share_board, assignment_data: assi_info
     )
   end
 end
@@ -96,8 +103,9 @@ def add_collaborators
   collabor_info.each do |collabor|
     share_board = CheckHigh::ShareBoard.first(share_board_name: collabor['share_board_name'])
     collabor['collaborator_email'].each do |email|
-      CheckHigh::AddCollaboratorToShareBoard.call(
-        email: email, share_board_id: share_board.id
+      owner = CheckHigh::Account.first(id: share_board.owner_share_board_id) 
+      CheckHigh::AddCollaborator.call(
+        account: owner, share_board: share_board, collab_email: email
       )
     end
   end

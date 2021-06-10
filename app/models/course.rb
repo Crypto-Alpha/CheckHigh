@@ -17,24 +17,23 @@ module CheckHigh
     plugin :association_dependencies,
            assignments: :destroy
 
-    # rubocop:disable Metrics/MethodLength
-    def to_json(options = {})
-      # for showing course details & related assignment link or creating related
-      JSON(
-        {
-          type: 'course',
-          attributes: {
-            id: id,
-            course_name: course_name,
-            links: {
-              rel: 'assignment_details',
-              # this should show assignments(only id & name) related to this course
-              href: "#{Api.config.API_HOST}/api/v1/courses/#{id}/assignments"
-            }
+    def to_h
+      {
+        type: 'course',
+        attributes: {
+          id: id,
+          course_name: course_name,
+          links: {
+            rel: 'assignment_details',
+            # this should show assignments(only id & name) related to this course
+            href: "#{Api.config.API_HOST}/api/v1/courses/#{id}/assignments"
           }
-        }, options
-      )
+        }
+      }
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def to_json(options = {})
+      JSON(to_h, options)
+    end
   end
 end
