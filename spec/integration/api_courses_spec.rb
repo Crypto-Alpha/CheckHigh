@@ -3,24 +3,24 @@
 require_relative '../spec_helper'
 
 describe 'Test Course Handling' do
-  include Rack::Test::Methods
-  crs_orm = CheckHigh::Course
 
   before do
     wipe_database
 
-    DATA[:courses][0..2].each do |course_data|
-      CheckHigh::Course.create(course_data)
-    end
+    @account_data = DATA[:accounts][0]
+    @wrong_account_data = DATA[:accounts][1]
+
+    @account = CheckHigh::Account.create(@account_data)
+    @wrong_account = CheckHigh::Account.create(@wrong_account_data)
+
+    header 'CONTENT_TYPE', 'application/json'
   end
 
   describe 'Getting Courses' do
     describe 'Getting list of Courses' do
       before do
-        @account_data = DATA[:accounts][0]
-        account = CheckHigh::Account.create(@account_data)
-        account.add_owned_course(DATA[:courses][0])
-        account.add_owned_course(DATA[:courses][1])
+        @account.add_owned_course(DATA[:courses][0])
+        @account.add_owned_course(DATA[:courses][1])
       end
 
       it 'HAPPY: should get list of courses for authorized account' do
@@ -49,19 +49,19 @@ describe 'Test Course Handling' do
 
     it 'HAPPY: should be able to get details of a specific course' do
       # details included linkage to assignments (some details about assignments under the course)
-      crs = crs_orm.first
+      crs = @account.add_owned_course(DATA[:courses][0])
 
+      header 'AUTHORIZATION', auth_header(@account_data)
       get "api/v1/courses/#{crs.id}"
       _(last_response.status).must_equal 200
 
-      result = JSON.parse last_response.body
-      _(result['id']).must_equal crs.id
-      _(result['course_name']).must_equal crs.course_name
-      _(result['links']['href']).must_include "courses/#{crs.id}/assignments"
+      result = JSON.parse(last_response.body)['data']
+      _(result['attributes']['id']).must_equal crs.id
+      _(result['attributes']['course_name']).must_equal crs.course_name
+      _(result['attributes']['links']['href']).must_include "courses/#{crs.id}/assignments"
     end
 
     it 'HAPPY: should return the right number of assignments related to a specific course' do
-      crs = crs_orm.first
 
       # create assignments related to the new created course
       DATA[:assignments][5..6].each do |assignment_data|
@@ -76,9 +76,15 @@ describe 'Test Course Handling' do
       _(result['data'].count).must_equal 2
     end
 
-    it 'SAD: should return error if unknown course requested' do
-      get '/api/v1/courses/soumya'
-      _(last_response.status).must_equal 404
+    it 'BAD AUTHORIZATION: should not get share board with wrong authorization' do
+      srb = @account.add_owned_share_board(DATA[:share_boards][0])
+
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      get "/api/v1/share_boards/#{srb.id}"
+      _(last_response.status).must_equal 403
+
+      result = JSON.parse last_response.body
+      _(result['attributes']).must_be_nil
     end
 
     it 'SECURITY: should prevent basic SQL injection targeting IDs' do
