@@ -27,10 +27,14 @@ module CheckHigh
           # POST api/v1/share_boards/[srb_id]/assignments
           # create new assignments in specific share board
           routing.post do
+            assi_data = CheckHigh::CreateAssiForOwner.call(
+              account: @auth_account, assignment_data: JSON.parse(routing.body.read)
+            )
+
             new_assignment = CreateAssiForSrb.call(
               account: @auth_account,
               share_board: @req_share_board,
-              assignment_data: JSON.parse(routing.body.read)
+              assignment_data: assi_data
             )
 
             response.status = 201
