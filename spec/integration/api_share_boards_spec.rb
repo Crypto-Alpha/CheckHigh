@@ -2,7 +2,6 @@
 
 require_relative '../spec_helper'
 
-binding.irb
 describe 'Test ShareBoards Handling' do
 
   before do
@@ -94,7 +93,7 @@ describe 'Test ShareBoards Handling' do
 
   describe 'Creating New ShareBoards' do
     before do
-      @srb_data = DATA[:share_boards][3]
+      @srb_data = DATA[:share_boards][0]
     end
 
     it 'HAPPY: should be able to create new share_boards' do
@@ -104,7 +103,7 @@ describe 'Test ShareBoards Handling' do
       _(last_response.header['Location'].size).must_be :>, 0
 
       created = JSON.parse(last_response.body)['data']['attributes']
-      srb = srb_orm.last
+      srb = CheckHigh::ShareBoard.first
 
       _(created['id']).must_equal srb.id
       _(created['share_board_name']).must_equal @srb_data['share_board_name']

@@ -7,7 +7,6 @@ require 'minitest/rg'
 require 'yaml'
 
 require_relative 'test_load_all'
-binding.irb
 
 def wipe_database
   CheckHigh::Account.map(&:destroy)
