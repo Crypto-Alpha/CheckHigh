@@ -32,6 +32,15 @@ module CheckHigh
       }
     end
 
+    def full_details
+      to_h.merge(
+        relationships: {
+          owner: Account.find(owner_course_id).first,
+          assignments: assignments
+        }
+      )
+    end
+
     def to_json(options = {})
       JSON(to_h, options)
     end
