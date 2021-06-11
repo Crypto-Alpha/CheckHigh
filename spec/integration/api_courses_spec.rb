@@ -70,7 +70,8 @@ describe 'Test Course Handling' do
       crs = @account.add_owned_course(DATA[:courses][0])
       # create assignments related to the new created course
       DATA[:assignments][5..6].each do |assignment_data|
-        crs.add_assignment(assignment_data)
+        new_assignment = @account.add_owned_assignment(assignment_data)
+        crs.add_assignment(new_assignment)
       end
       header 'AUTHORIZATION', "Bearer #{auth[:attributes][:auth_token]}"
 

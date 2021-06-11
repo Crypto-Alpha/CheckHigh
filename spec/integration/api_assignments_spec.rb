@@ -13,7 +13,6 @@ describe 'Test Assignment Handling' do
 
     @account = CheckHigh::Account.create(@account_data)
     @account.add_owned_course(DATA[:courses][0])
-    @account.add_owned_course(DATA[:courses][1])
     @account.add_owned_assignment(DATA[:assignments][0])
     @account.add_owned_assignment(DATA[:assignments][1])
     CheckHigh::Account.create(@wrong_account_data)
@@ -84,11 +83,15 @@ describe 'Test Assignment Handling' do
     before do
       @crs = CheckHigh::Course.first
       @assi_data = DATA[:assignments][4]
+      # @crs = @account.add_owned_course(DATA[:courses][1])
+      # new_assignment = @account.add_owned_assignment(@assi_data)
+      # @crs.add_assignment(new_assignment)
     end
 
     it 'HAPPY: should be able to create a new assignment' do
       header 'AUTHORIZATION', auth_header(@account_data)
       post "api/v1/courses/#{@crs.id}/assignments", @assi_data.to_json
+
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
@@ -124,6 +127,7 @@ describe 'Test Assignment Handling' do
     it 'BAD VULNERABILITY: should not create with mass assignment' do
       bad_data = @assi_data.clone
       bad_data['created_at'] = '1900-01-01'
+
       header 'AUTHORIZATION', auth_header(@account_data)
       post "api/v1/courses/#{@crs.id}/assignments", bad_data.to_json
 
