@@ -83,9 +83,6 @@ describe 'Test Assignment Handling' do
     before do
       @crs = CheckHigh::Course.first
       @assi_data = DATA[:assignments][4]
-      # @crs = @account.add_owned_course(DATA[:courses][1])
-      # new_assignment = @account.add_owned_assignment(@assi_data)
-      # @crs.add_assignment(new_assignment)
     end
 
     it 'HAPPY: should be able to create a new assignment' do
