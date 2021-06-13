@@ -17,6 +17,7 @@ module CheckHigh
     plugin :association_dependencies,
            assignments: :destroy
 
+    # rubocop:disable Metrics/MethodLength
     def to_h
       {
         type: 'course',
@@ -31,6 +32,7 @@ module CheckHigh
         }
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     def full_details
       to_h.merge(
