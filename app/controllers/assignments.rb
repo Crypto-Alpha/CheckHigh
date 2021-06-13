@@ -6,10 +6,8 @@ module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
     route('assignments') do |routing|
-      unless @auth_account
-        routing.halt 403, { message: 'Not authorized' }.to_json
-      end
-      
+      routing.halt 403, { message: 'Not authorized' }.to_json unless @auth_account
+
       @assi_route = "#{@api_root}/assignments"
 
       # GET api/v1/assignments/[assi_id]
@@ -28,7 +26,6 @@ module CheckHigh
           routing.halt 500, { message: 'API server error' }.to_json
         end
       end
-
 
       routing.is do
         # GET api/v1/assignments

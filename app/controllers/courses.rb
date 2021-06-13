@@ -2,7 +2,6 @@
 
 require_relative './app'
 
-# rubocop:disable Metrics/BlockLength
 module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
@@ -16,7 +15,6 @@ module CheckHigh
         @req_course = Course.first(id: course_id)
 
         routing.on('assignments') do
-          # TODO_0608: need to check the logic of AssignmentPolicy::CourseScope
           # GET api/v1/courses/[course_id]/assignments
           # return specific course's assignments
           routing.get do
@@ -55,7 +53,7 @@ module CheckHigh
         # GET api/v1/courses/[course_id]
         # return a specific course
         routing.get do
-          course = GetCourseQuery.call( account: @auth_account, course: @req_course )
+          course = GetCourseQuery.call(account: @auth_account, course: @req_course)
           { data: course }.to_json
         rescue GetCourseQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
@@ -82,7 +80,7 @@ module CheckHigh
         routing.post do
           new_data = JSON.parse(routing.body.read)
           new_course = @auth_account.add_owned_course(new_data)
-          
+
           response.status = 201
           response['Location'] = "#{@crs_route}/#{new_course.id}"
           { message: 'Course saved', data: new_course }.to_json
@@ -95,4 +93,3 @@ module CheckHigh
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
