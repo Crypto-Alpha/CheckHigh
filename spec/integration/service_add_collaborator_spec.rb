@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-describe 'Test AddCollaboratorToShareBoard service' do
+describe 'Test AddCollaborator service' do
   before do
     wipe_database
 
@@ -20,9 +20,10 @@ describe 'Test AddCollaboratorToShareBoard service' do
   end
 
   it 'HAPPY: should be able to add a collaborator to a share_board' do
-    CheckHigh::AddCollaboratorToShareBoard.call(
-      email: @collaborator.email,
-      share_board_id: @share_board.id
+    CheckHigh::AddCollaborator.call(
+      account: @owner,
+      share_board: @share_board,
+      collab_email: @collaborator.email
     )
 
     _(@collaborator.share_boards.count).must_equal 1
@@ -31,10 +32,11 @@ describe 'Test AddCollaboratorToShareBoard service' do
 
   it 'BAD: should not add owner as a collaborator' do
     _(proc {
-      CheckHigh::AddCollaboratorToShareBoard.call(
-        email: @owner.email,
-        share_board_id: @share_board.id
+      CheckHigh::AddCollaborator.call(
+        account: @owner,
+        share_board: @share_board,
+        collab_email: @owner.email
       )
-    }).must_raise CheckHigh::AddCollaboratorToShareBoard::OwnerNotCollaboratorError
+    }).must_raise CheckHigh::AddCollaborator::ForbiddenError
   end
 end

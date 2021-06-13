@@ -15,9 +15,19 @@ def wipe_database
   CheckHigh::Course.map(&:destroy)
 end
 
-DATA = {} # rubocop:disable Style/MutableConstant
-DATA[:accounts] = YAML.safe_load File.read('app/db/seeds/account_seeds.yml')
-DATA[:assignments] = YAML.safe_load File.read('app/db/seeds/assignment_seeds.yml')
-DATA[:share_boards] = YAML.safe_load File.read('app/db/seeds/share_board_seeds.yml')
-DATA[:courses] = YAML.safe_load File.read('app/db/seeds/course_seeds.yml')
-# DATA[:dashboards] = YAML.safe_load File.read('app/db/seeds/dashboard_seeds.yml')
+def auth_header(account_data)
+  auth = CheckHigh::AuthenticateAccount.call(
+    username: account_data['username'],
+    password: account_data['password']
+  )
+
+  "Bearer #{auth[:attributes][:auth_token]}"
+end
+
+DATA = {
+  accounts: YAML.load(File.read('app/db/seeds/account_seeds.yml')),
+  assignments: YAML.load(File.read('app/db/seeds/assignment_seeds.yml')),
+  share_boards: YAML.load(File.read('app/db/seeds/share_board_seeds.yml')),
+  courses: YAML.load(File.read('app/db/seeds/course_seeds.yml')),
+  owned_assignments: YAML.load(File.read('app/db/seeds/owners_assignments.yml'))
+}.freeze
