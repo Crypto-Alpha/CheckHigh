@@ -13,6 +13,7 @@ describe 'Test Assignment Handling' do
 
     @account = CheckHigh::Account.create(@account_data)
     @account.add_owned_course(DATA[:courses][0])
+    @account.add_owned_share_board(DATA[:share_boards][0])
     @account.add_owned_assignment(DATA[:assignments][0])
     @account.add_owned_assignment(DATA[:assignments][1])
     CheckHigh::Account.create(@wrong_account_data)
@@ -127,6 +128,63 @@ describe 'Test Assignment Handling' do
 
       header 'AUTHORIZATION', auth_header(@account_data)
       post "api/v1/courses/#{@crs.id}/assignments", bad_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+      _(last_response.status).must_equal 400
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+  end
+
+  describe 'Creating assignments' do
+    before do
+      @srb = CheckHigh::ShareBoard.first
+      @assi_data = DATA[:assignments][4]
+    end
+
+    it 'HAPPY: should be able to create a new assignment' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      # binding.irb
+      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
+
+      _(last_response.status).must_equal 201
+      _(last_response.header['Location'].size).must_be :>, 0
+
+      created = JSON.parse(last_response.body)['data']['attributes']
+      assi = CheckHigh::Assignment.order(:created_at).last
+
+      _(created['id']).must_equal assi.id
+      _(created['assignment_name']).must_equal @assi_data['assignment_name']
+      _(created['content']).must_equal @assi_data['content']
+    end
+
+    it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'SAD AUTHORIZATION: should not create without any authorization' do
+      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'BAD VULNERABILITY: should not create with mass assignment' do
+      bad_data = @assi_data.clone
+      bad_data['created_at'] = '1900-01-01'
+
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/share_boards/#{@srb.id}/assignments", bad_data.to_json
 
       data = JSON.parse(last_response.body)['data']
       _(last_response.status).must_equal 400

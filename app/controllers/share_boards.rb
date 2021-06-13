@@ -40,9 +40,9 @@ module CheckHigh
             response.status = 201
             response['Location'] = "#{@assi_route}/#{new_assignment.id}"
             { message: 'Assignment saved', data: new_assignment }.to_json
-          rescue CreateAssiForSrb::ForbiddenError => e
+          rescue CreateAssiForOwner::ForbiddenError, CreateAssiForSrb::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
-          rescue CreateAssiForSrb::IllegalRequestError => e
+          rescue CreateAssiForOwner::IllegalRequestError, CreateAssiForSrb::IllegalRequestError => e
             routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
             puts "CREATE_ASSIGNMENT_ERROR: #{e.inspect}"
