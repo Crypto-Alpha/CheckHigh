@@ -23,7 +23,7 @@ module CheckHigh
       policy = AssignmentPolicy.new(requestor, assignment)
       raise ForbiddenError unless policy.can_view?
 
-      assignment
+      assignment.full_details.merge(policies: policy.summary)
     end
   end
 end

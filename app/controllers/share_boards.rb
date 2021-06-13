@@ -8,13 +8,12 @@ module CheckHigh
     route('share_boards') do |routing|
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, unauthorized_message) unless @auth_account
-      
+
       @srb_route = "#{@api_root}/share_boards"
       routing.on String do |srb_id|
         @req_share_board = ShareBoard.first(id: srb_id)
-        
+
         routing.on('assignments') do
-          # TODO_0608: same as course
           # GET api/v1/share_boards/[srb_id]/assignments
           # return specific shareboard's assignments
           routing.get do
@@ -88,7 +87,7 @@ module CheckHigh
 
         # GET api/v1/share_boards/[srb_id]
         routing.get do
-          share_board = GetShareBoardQuery.call( account: @auth_account, share_board: @req_share_board )
+          share_board = GetShareBoardQuery.call(account: @auth_account, share_board: @req_share_board)
           { data: share_board }.to_json
         rescue GetShareBoardQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
@@ -99,7 +98,7 @@ module CheckHigh
           routing.halt 500, { message: 'API server error' }.to_json
         end
       end
-      
+
       routing.is do
         # GET api/v1/share_boards
         routing.get do
