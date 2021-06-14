@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Get an assignment 
-  class GetAssignmentQuery
-    # Error for access that assignment 
+  # Remove an assignment
+  class RemoveAssignment
+    # Error for owner cannot be collaborator
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to access that assignment'
+        'You are not allowed to remove that assignment'
       end
     end
 
@@ -17,13 +17,13 @@ module CheckHigh
       end
     end
 
-    # Assignment for given requestor account
     def self.call(requestor:, assignment:)
       raise NotFoundError unless assignment
       policy = AssignmentPolicy.new(requestor, assignment)
-      raise ForbiddenError unless policy.can_view?
+      raise ForbiddenError unless policy.can_delete?
 
-      assignment.full_details.merge(policies: policy.summary)
+      deleted_assignment = assignment.delete
+      deleted_assignment
     end
   end
 end

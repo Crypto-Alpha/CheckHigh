@@ -97,6 +97,42 @@ module CheckHigh
           puts "FIND SHAREBOARD ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
+
+        # PUT api/v1/share_boards/[srb_id]
+        routing.put do
+          # rename shareboard's name
+          req_data = JSON.parse(routing.body.read)
+
+          new_share_board = RenameShareBoard.call(
+            requestor: @auth_account,
+            share_board: @req_share_board,
+            new_name: req_data['new_name']
+          )
+
+          { data: new_share_board }.to_json
+        rescue RenameShareBoard::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue RenameShareBoard::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # DELETE api/v1/share_boards/[srb_id]
+        routing.delete do
+          req_data = JSON.parse(routing.body.read)
+          deleted_share_board = RemoveShareBoard.call(
+            requestor: @auth_account,
+            share_board: @req_share_board
+          )
+
+          { message: "Your share board '#{deleted_share_board.share_board_name}' has been deleted permanently",
+            data: deleted_share_board }.to_json
+        rescue RemoveShareBoard::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
       end
 
       routing.is do

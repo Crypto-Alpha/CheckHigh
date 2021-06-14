@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Add a collaborator to another owner's existing project
+  # Delete a collaborator from owner's existing project
   class RemoveCollaborator
     # Error for owner cannot be collaborator
     class ForbiddenError < StandardError
