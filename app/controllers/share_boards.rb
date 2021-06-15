@@ -39,9 +39,9 @@ module CheckHigh
             response.status = 201
             response['Location'] = "#{@assi_route}/#{new_assignment.id}"
             { message: 'Assignment saved', data: new_assignment }.to_json
-          rescue CreateAssiForSrb::ForbiddenError => e
+          rescue CreateAssiForOwner::ForbiddenError, CreateAssiForSrb::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
-          rescue CreateAssiForSrb::IllegalRequestError => e
+          rescue CreateAssiForOwner::IllegalRequestError, CreateAssiForSrb::IllegalRequestError => e
             routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
             puts "CREATE_ASSIGNMENT_ERROR: #{e.inspect}"
@@ -95,6 +95,42 @@ module CheckHigh
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
           puts "FIND SHAREBOARD ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # PUT api/v1/share_boards/[srb_id]
+        routing.put do
+          # rename shareboard's name
+          req_data = JSON.parse(routing.body.read)
+
+          new_share_board = RenameShareBoard.call(
+            requestor: @auth_account,
+            share_board: @req_share_board,
+            new_name: req_data['new_name']
+          )
+
+          { data: new_share_board }.to_json
+        rescue RenameShareBoard::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue RenameShareBoard::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # DELETE api/v1/share_boards/[srb_id]
+        routing.delete do
+          req_data = JSON.parse(routing.body.read)
+          deleted_share_board = RemoveShareBoard.call(
+            requestor: @auth_account,
+            share_board: @req_share_board
+          )
+
+          { message: "Your share board '#{deleted_share_board.share_board_name}' has been deleted permanently",
+            data: deleted_share_board }.to_json
+        rescue RemoveShareBoard::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
           routing.halt 500, { message: 'API server error' }.to_json
         end
       end

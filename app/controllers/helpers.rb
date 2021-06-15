@@ -11,6 +11,7 @@ module CheckHigh
     end
 
     def authenticated_account(headers)
+      puts headers['AUTHORIZATION']
       return nil unless headers['AUTHORIZATION']
 
       scheme, auth_token = headers['AUTHORIZATION'].split

@@ -40,9 +40,9 @@ module CheckHigh
             response.status = 201
             response['Location'] = "#{@assi_route}/#{new_assignment.id}"
             { message: 'Assignment saved', data: new_assignment }.to_json
-          rescue CreateAssiForCourse::ForbiddenError => e
+          rescue CreateAssiForOwner::ForbiddenError, CreateAssiForCourse::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
-          rescue CreateAssiForCourse::IllegalRequestError => e
+          rescue CreateAssiForOwner::IllegalRequestError, CreateAssiForCourse::IllegalRequestError => e
             routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
             puts "CREATE_ASSIGNMENT_FOR_COURSE_ERROR: #{e.inspect}"
@@ -61,6 +61,42 @@ module CheckHigh
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
           puts "FIND COURSE ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # PUT api/v1/courses/[course_id]
+        routing.put do
+          # rename course's name
+          req_data = JSON.parse(routing.body.read)
+
+          new_course = RenameCourse.call(
+            requestor: @auth_account,
+            course: @req_course,
+            new_name: req_data['new_name']
+          )
+
+          { data: new_course }.to_json
+        rescue RenameCourse::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue RenameCourse::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # DELETE api/v1/courses/[course_id]
+        routing.delete do
+          req_data = JSON.parse(routing.body.read)
+          deleted_course = RemoveCourse.call(
+            requestor: @auth_account,
+            course: @req_course
+          )
+
+          { message: "Your course '#{deleted_course.course_name}' has been deleted permanently",
+            data: deleted_course }.to_json
+        rescue RemoveCourse::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
           routing.halt 500, { message: 'API server error' }.to_json
         end
       end
