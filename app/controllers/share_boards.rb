@@ -14,6 +14,27 @@ module CheckHigh
         @req_share_board = ShareBoard.first(id: srb_id)
 
         routing.on('assignments') do
+          routing.on(String) do |assi_id|
+            # POST api/v1/share_boards/[srb_id]/assignments/[assi_id]
+            # create a new assignment to a specific share board
+            routing.post do
+              assi_data = Assignment.find(id: assi_id) 
+
+              new_assignment = CreateAssiForSrb.call(
+                account: @auth_account,
+                share_board: @req_share_board,
+                assignment_data: assi_data
+              )
+
+              response.status = 201
+              response['Location'] = "#{@assi_route}/#{new_assignment.id}"
+              { message: 'Assignment saved', data: new_assignment }.to_json
+            rescue StandardError => e
+              puts "CREATE_ASSIGNMENT_FOR_SHAREBOARD_ERROR: #{e.inspect}"
+              routing.halt 500, { message: 'API server error' }.to_json
+            end
+          end
+
           # GET api/v1/share_boards/[srb_id]/assignments
           # return specific shareboard's assignments
           routing.get do
@@ -130,8 +151,10 @@ module CheckHigh
             data: deleted_share_board }.to_json
         rescue RemoveShareBoard::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
-        rescue StandardError
-          routing.halt 500, { message: 'API server error' }.to_json
+        rescue RemoveShareBoard::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        #rescue StandardError
+          #routing.halt 500, { message: 'API server error' }.to_json
         end
       end
 
