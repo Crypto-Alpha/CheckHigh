@@ -48,7 +48,6 @@ module CheckHigh
 
         # DELETE api/v1/assignments/[assi_id]
         routing.delete do
-          req_data = JSON.parse(routing.body.read)
           deleted_assignment = RemoveAssignment.call(
             requestor: @auth_account,
             assignment: @req_assignment

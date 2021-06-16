@@ -22,8 +22,11 @@ module CheckHigh
       policy = CoursePolicy.new(requestor, course)
       raise ForbiddenError unless policy.can_delete?
 
-      deleted_course = course.delete
-      deleted_course
+      requestor.remove_owned_course(course)
+
+      #TODO: course cannot be removed (sqlite foreign constraints) (wait for solutions)
+      #deleted_course = course.delete
+      #deleted_course
     end
   end
 end

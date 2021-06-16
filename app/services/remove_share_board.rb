@@ -22,8 +22,11 @@ module CheckHigh
       policy = ShareBoardPolicy.new(requestor, share_board)
       raise ForbiddenError unless policy.can_delete?
 
-      deleted_share_board = share_board.delete
-      deleted_share_board
+      requestor.remove_owned_share_board(share_board)
+
+      #TODO: share board cannot be removed (sqlite foreign constraints) (wait for solutions)
+      #deleted_share_board = share_board.delete
+      #deleted_share_board
     end
   end
 end

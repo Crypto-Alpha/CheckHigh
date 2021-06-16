@@ -15,6 +15,44 @@ module CheckHigh
         @req_course = Course.first(id: course_id)
 
         routing.on('assignments') do
+          routing.on(String) do |assignment_id|
+            @req_assignment = Assignment.find(id: assignment_id) 
+
+            # PUT api/v1/courses/[course_id]/assignments/[assignment_id]
+            # move assignments into new course
+            routing.put do
+
+              new_assignment = CreateAssiForCourse.call(
+                account: @auth_account,
+                course: @req_course,
+                assignment_data: @req_assignment
+              )
+
+              response.status = 200
+              response['Location'] = "#{@assi_route}/#{new_assignment.id}"
+              { message: 'Assignment moved success', data: new_assignment }.to_json
+            rescue StandardError => e
+              puts "MOVE_ASSIGNMENT_TO_NEW_COURSE_ERROR: #{e.inspect}"
+              routing.halt 500, { message: 'API server error' }.to_json
+            end
+
+            # DELETE api/v1/courses/[course_id]/assignments/[assignment_id]
+            # remove an assignment from an course
+            routing.delete do
+              removed_assignment = RemoveAssignment.call_for_course(
+                requestor: @auth_account,
+                course: @req_course,
+                assignment: @req_assignment
+              )
+
+              { message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the course", data: removed_assignment }.to_json
+            rescue RemoveAssignment::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue StandardError
+              routing.halt 500, { message: 'API server error' }.to_json
+            end
+          end
+
           # GET api/v1/courses/[course_id]/assignments
           # return specific course's assignments
           routing.get do
