@@ -15,7 +15,7 @@ module CheckHigh
 
         # GET api/v1/assignments/[assi_id]
         routing.get do
-          assignment = GetAssignmentQuery.call(requestor: @auth_account, assignment: @req_assignment)
+          assignment = GetAssignmentQuery.call(auth: @auth, assignment: @req_assignment)
           { data: assignment }.to_json
         rescue GetAssignmentQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json

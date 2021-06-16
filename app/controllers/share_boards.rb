@@ -87,7 +87,7 @@ module CheckHigh
 
         # GET api/v1/share_boards/[srb_id]
         routing.get do
-          share_board = GetShareBoardQuery.call(account: @auth_account, share_board: @req_share_board)
+          share_board = GetShareBoardQuery.call(auth: @auth, share_board: @req_share_board)
           { data: share_board }.to_json
         rescue GetShareBoardQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json

@@ -7,7 +7,7 @@ module CheckHigh
   class Api < Roda
     route('courses') do |routing|
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
-      routing.halt(403, unauthorized_message) unless @auth_account
+      routing.halt(403, UNAUTH_MSG) unless @auth_account
 
       @crs_route = "#{@api_root}/courses"
 
@@ -28,11 +28,11 @@ module CheckHigh
           # create new assignments in specific course
           routing.post do
             assi_data = CheckHigh::CreateAssiForOwner.call(
-              account: @auth_account, assignment_data: JSON.parse(routing.body.read)
+              auth: @auth, assignment_data: JSON.parse(routing.body.read)
             )
 
             new_assignment = CreateAssiForCourse.call(
-              account: @auth_account,
+              auth: @auth,
               course: @req_course,
               assignment_data: assi_data
             )
@@ -53,7 +53,7 @@ module CheckHigh
         # GET api/v1/courses/[course_id]
         # return a specific course
         routing.get do
-          course = GetCourseQuery.call(account: @auth_account, course: @req_course)
+          course = GetCourseQuery.call(auth: @auth, course: @req_course)
           { data: course }.to_json
         rescue GetCourseQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
@@ -70,7 +70,7 @@ module CheckHigh
           req_data = JSON.parse(routing.body.read)
 
           new_course = RenameCourse.call(
-            requestor: @auth_account,
+            auth: @auth,
             course: @req_course,
             new_name: req_data['new_name']
           )
@@ -88,8 +88,8 @@ module CheckHigh
         routing.delete do
           req_data = JSON.parse(routing.body.read)
           deleted_course = RemoveCourse.call(
-            requestor: @auth_account,
-            course: @req_course
+            auth: @auth,
+            course: @req_data
           )
 
           { message: "Your course '#{deleted_course.course_name}' has been deleted permanently",
