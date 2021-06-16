@@ -135,7 +135,7 @@ describe 'Test Course Handling' do
       _(created).must_be_nil
     end
 
-    it 'SECURITY: should not create project with mass assignment' do
+    it 'SECURITY: should not create courses with mass assignment' do
       bad_data = @crs_data.clone
       bad_data['created_at'] = '1900-01-01'
 

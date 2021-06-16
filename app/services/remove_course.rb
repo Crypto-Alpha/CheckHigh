@@ -17,13 +17,13 @@ module CheckHigh
       end
     end
 
-    def self.call(requestor:, course:)
+    def self.call(auth:, course:)
       raise NotFoundError unless course
-      policy = CoursePolicy.new(requestor, course)
+
+      policy = CoursePolicy.new(auth[:account], course, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
-      deleted_course = course.delete
-      deleted_course
+      course.delete
     end
   end
 end

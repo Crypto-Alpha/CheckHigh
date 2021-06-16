@@ -6,8 +6,7 @@ module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
     route('share_boards') do |routing|
-      unauthorized_message = { message: 'Unauthorized Request' }.to_json
-      routing.halt(403, unauthorized_message) unless @auth_account
+      routing.halt(403, UNAUTH_MSG) unless @auth_account
 
       @srb_route = "#{@api_root}/share_boards"
       routing.on String do |srb_id|
@@ -27,11 +26,11 @@ module CheckHigh
           # create new assignments in specific share board
           routing.post do
             assi_data = CheckHigh::CreateAssiForOwner.call(
-              account: @auth_account, assignment_data: JSON.parse(routing.body.read)
+              auth: @auth, assignment_data: JSON.parse(routing.body.read)
             )
 
             new_assignment = CreateAssiForSrb.call(
-              account: @auth_account,
+              auth: @auth,
               share_board: @req_share_board,
               assignment_data: assi_data
             )
@@ -55,7 +54,7 @@ module CheckHigh
             req_data = JSON.parse(routing.body.read)
 
             collaborator = AddCollaborator.call(
-              account: @auth_account,
+              auth: @auth,
               share_board: @req_share_board,
               collab_email: req_data['email']
             )
@@ -71,7 +70,7 @@ module CheckHigh
           routing.delete do
             req_data = JSON.parse(routing.body.read)
             collaborator = RemoveCollaborator.call(
-              req_username: @auth_account.username,
+              auth: @auth,
               collab_email: req_data['email'],
               share_board_id: srb_id
             )
@@ -104,7 +103,7 @@ module CheckHigh
           req_data = JSON.parse(routing.body.read)
 
           new_share_board = RenameShareBoard.call(
-            requestor: @auth_account,
+            auth: @auth,
             share_board: @req_share_board,
             new_name: req_data['new_name']
           )
@@ -122,7 +121,7 @@ module CheckHigh
         routing.delete do
           req_data = JSON.parse(routing.body.read)
           deleted_share_board = RemoveShareBoard.call(
-            requestor: @auth_account,
+            auth: @auth,
             share_board: @req_share_board
           )
 
@@ -149,13 +148,18 @@ module CheckHigh
         # create new share_board
         routing.post do
           new_data = JSON.parse(routing.body.read)
-          new_srb = @auth_account.add_owned_share_board(new_data)
+          new_srb = CheckHigh::CreateShareBoardForOwner.call(
+            auth: @auth,
+            share_board_data: new_data
+          )
 
           response.status = 201
           response['Location'] = "#{@srb_route}/#{new_srb.id}"
           { message: 'ShareBoard saved', data: new_srb }.to_json
         rescue Sequel::MassAssignmentRestriction
           routing.halt 400, { message: 'Illegal Request' }.to_json
+        rescue CreateShareBoardForOwner::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
         rescue StandardError
           routing.halt 500, { message: 'API server error' }.to_json
         end

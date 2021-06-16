@@ -17,13 +17,13 @@ module CheckHigh
       end
     end
 
-    def self.call(requestor:, share_board:)
+    def self.call(auth:, share_board:)
       raise NotFoundError unless share_board
-      policy = ShareBoardPolicy.new(requestor, share_board)
+
+      policy = ShareBoardPolicy.new(auth[:account], share_board, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
-      deleted_share_board = share_board.delete
-      deleted_share_board
+      share_board.delete
     end
   end
 end

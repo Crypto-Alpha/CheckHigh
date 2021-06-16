@@ -18,9 +18,10 @@ module CheckHigh
     end
 
     # Share board for given requestor account
-    def self.call(requestor:, course:, new_name:)
+    def self.call(auth:, course:, new_name:)
       raise NotFoundError unless course
-      policy = CoursePolicy.new(requestor, course)
+
+      policy = CoursePolicy.new(auth[:account], course, auth[:scope])
       raise ForbiddenError unless policy.can_edit?
 
       course.update(course_name: new_name)

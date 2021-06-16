@@ -12,9 +12,11 @@ module CheckHigh
       end
     end
 
-    def self.call(account:, share_board:, collab_email:)
+    def self.call(auth:, share_board:, collab_email:)
       invitee = Account.first(email: collab_email)
-      policy = CollaborationRequestPolicy.new(share_board, account, invitee)
+      policy = CollaborationRequestPolicy.new(
+        share_board, auth[:account], invitee, auth[:scope]
+      )
       raise ForbiddenError unless policy.can_invite?
 
       share_board.add_collaborator(invitee)

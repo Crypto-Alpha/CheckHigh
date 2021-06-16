@@ -6,7 +6,6 @@ module CheckHigh
   # Web controller for CheckHigh API
   class Api < Roda
     route('courses') do |routing|
-      unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, UNAUTH_MSG) unless @auth_account
 
       @crs_route = "#{@api_root}/courses"
@@ -115,13 +114,20 @@ module CheckHigh
         # create a course
         routing.post do
           new_data = JSON.parse(routing.body.read)
-          new_course = @auth_account.add_owned_course(new_data)
+          new_course = CheckHigh::CreateCourseForOwner.call(
+            auth: @auth,
+            course_data: new_data
+          )
 
           response.status = 201
           response['Location'] = "#{@crs_route}/#{new_course.id}"
           { message: 'Course saved', data: new_course }.to_json
         rescue Sequel::MassAssignmentRestriction
           routing.halt 400, { message: 'Illegal Request' }.to_json
+        rescue CreateCourseForOwner::IllegalRequestError => e
+          routing.halt 400, { message: e.message }.to_json
+        rescue CreateCourseForOwner::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
         rescue StandardError
           routing.halt 500, { message: 'API server error' }.to_json
         end

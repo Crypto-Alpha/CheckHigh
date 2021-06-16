@@ -48,4 +48,4 @@ class AuthScope
         @scopes[resource] ||= []
         @scopes[resource] << permission
     end
-    end
+end

@@ -18,9 +18,9 @@ module CheckHigh
     end
 
     # Assignment for given requestor account
-    def self.call(requestor:, assignment:)
+    def self.call(auth:, assignment:)
       raise NotFoundError unless assignment
-      policy = AssignmentPolicy.new(requestor, assignment)
+      policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
       assignment.full_details.merge(policies: policy.summary)

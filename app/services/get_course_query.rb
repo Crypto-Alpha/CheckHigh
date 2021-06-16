@@ -17,11 +17,11 @@ module CheckHigh
       end
     end
 
-    def self.call(account:, course:)
+    def self.call(auth:, course:)
 
       raise NotFoundError unless course
 
-      policy = CoursePolicy.new(account, course)
+      policy = CoursePolicy.new(auth[:account], course, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
       course.full_details.merge(policies: policy.summary)

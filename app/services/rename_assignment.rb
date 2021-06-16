@@ -20,6 +20,7 @@ module CheckHigh
     # Assignment for given requestor account
     def self.call(requestor:, assignment:, new_name:)
       raise NotFoundError unless assignment
+      
       policy = AssignmentPolicy.new(requestor, assignment)
       raise ForbiddenError unless policy.can_edit?
 
