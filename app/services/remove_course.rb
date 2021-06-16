@@ -23,7 +23,11 @@ module CheckHigh
       policy = CoursePolicy.new(auth[:account], course, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
-      course.delete
+      auth[:account].remove_owned_course(course)
+
+      #TODO: course cannot be removed (sqlite foreign constraints) (wait for solutions)
+      #deleted_course = course.delete
+      #deleted_course
     end
   end
 end
