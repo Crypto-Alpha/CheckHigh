@@ -12,16 +12,17 @@ describe 'Test AddCollaborator service' do
 
     share_board_data = DATA[:share_boards].first
 
+    @owner_data = DATA[:accounts][0]
     @owner = CheckHigh::Account.all[0]
     @collaborator = CheckHigh::Account.all[1]
-    @share_board = CheckHigh::CreateShareBoardForOwner.call(
-      owner_id: @owner.id, share_board_data: share_board_data
-    )
+    @share_board = @owner.add_owned_share_board(share_board_data)
   end
 
   it 'HAPPY: should be able to add a collaborator to a share_board' do
+    auth = authorization(@owner_data)
+
     CheckHigh::AddCollaborator.call(
-      account: @owner,
+      auth: auth,
       share_board: @share_board,
       collab_email: @collaborator.email
     )
@@ -31,9 +32,14 @@ describe 'Test AddCollaborator service' do
   end
 
   it 'BAD: should not add owner as a collaborator' do
+    auth = CheckHigh::AuthenticateAccount.call(
+      username: @owner_data['username'],
+      password: @owner_data['password']
+    )
+
     _(proc {
       CheckHigh::AddCollaborator.call(
-        account: @owner,
+        auth: auth,
         share_board: @share_board,
         collab_email: @owner.email
       )
