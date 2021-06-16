@@ -32,7 +32,7 @@ module CheckHigh
           req_data = JSON.parse(routing.body.read)
 
           assignment = RenameAssignment.call(
-            requestor: @auth_account,
+            auth: @auth,
             assignment: @req_assignment,
             new_name: req_data['new_name']
           )
@@ -50,7 +50,7 @@ module CheckHigh
         routing.delete do
           req_data = JSON.parse(routing.body.read)
           deleted_assignment = RemoveAssignment.call(
-            requestor: @auth_account,
+            auth: @auth,
             assignment: @req_assignment
           )
 
@@ -77,7 +77,7 @@ module CheckHigh
         # create a lonely assignment
         routing.post do
           new_assignment = CreateAssiForOwner.call(
-            account: @auth_account,
+            auth: @auth,
             assignment_data: JSON.parse(routing.body.read)
           )
 
