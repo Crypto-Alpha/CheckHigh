@@ -48,6 +48,7 @@ module CheckHigh
             rescue RemoveAssignment::ForbiddenError => e
               routing.halt 403, { message: e.message }.to_json
             rescue StandardError
+              puts "REMOVE_ASSIGNMENT_FROM_COURSE_ERROR: #{e.inspect}"
               routing.halt 500, { message: 'API server error' }.to_json
             end
           end
@@ -123,14 +124,15 @@ module CheckHigh
 
         # DELETE api/v1/courses/[course_id]
         routing.delete do
-          req_data = JSON.parse(routing.body.read)
           deleted_course = RemoveCourse.call(
             auth: @auth,
-            course: @req_data
+            course: @req_course
           )
 
-          { message: "Your course '#{deleted_course.course_name}' has been deleted permanently",
-            data: deleted_course }.to_json
+          { 
+            message: "Your course '#{deleted_course.course_name}' has been deleted permanently",
+            data: deleted_course 
+          }.to_json
         rescue RemoveCourse::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
         rescue StandardError
