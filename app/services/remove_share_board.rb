@@ -23,6 +23,7 @@ module CheckHigh
       policy = ShareBoardPolicy.new(auth[:account], share_board, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
+      share_baord.remove_all_assignments
       auth[:account].remove_owned_share_board(share_board)
 
       #TODO: share board cannot be removed (sqlite foreign constraints) (wait for solutions)

@@ -140,7 +140,6 @@ module CheckHigh
 
         # DELETE api/v1/share_boards/[srb_id]
         routing.delete do
-          req_data = JSON.parse(routing.body.read)
           deleted_share_board = RemoveShareBoard.call(
             auth: @auth,
             share_board: @req_share_board
@@ -152,8 +151,8 @@ module CheckHigh
           routing.halt 403, { message: e.message }.to_json
         rescue RemoveShareBoard::NotFoundError => e
           routing.halt 404, { message: e.message }.to_json
-        #rescue StandardError
-          #routing.halt 500, { message: 'API server error' }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
         end
       end
 
