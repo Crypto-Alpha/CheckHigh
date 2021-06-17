@@ -18,10 +18,10 @@ module CheckHigh
     end
 
     # Assignment for given requestor account
-    def self.call(requestor:, assignment:, new_name:)
+    def self.call(auth:, assignment:, new_name:)
       raise NotFoundError unless assignment
       
-      policy = AssignmentPolicy.new(requestor, assignment)
+      policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_edit?
 
       new_assignment = assignment.update(assignment_name: new_name)

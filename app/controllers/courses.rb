@@ -22,7 +22,7 @@ module CheckHigh
             routing.put do
 
               new_assignment = CreateAssiForCourse.call(
-                account: @auth_account,
+                auth: @auth,
                 course: @req_course,
                 assignment_data: @req_assignment
               )
@@ -39,7 +39,7 @@ module CheckHigh
             # remove an assignment from an course
             routing.delete do
               removed_assignment = RemoveAssignment.call_for_course(
-                requestor: @auth_account,
+                auth: @auth,
                 course: @req_course,
                 assignment: @req_assignment
               )
