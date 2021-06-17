@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Credence
+module CheckHigh
   # Maps Github account details to attributes
   class GithubAccount
     def initialize(gh_account)

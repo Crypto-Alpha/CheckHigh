@@ -5,7 +5,7 @@ module CheckHigh
   class CreateShareBoardForOwner
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to add more documents'
+        'You are not allowed to add more assignments'
       end
     end
 

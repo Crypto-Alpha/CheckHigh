@@ -2,7 +2,7 @@
 
 require 'http'
 
-module Credence
+module CheckHigh
   # Find or create an SsoAccount based on Github code
   class AuthorizeSso
     def call(access_token)
@@ -14,7 +14,7 @@ module Credence
 
     def get_github_account(access_token)
       gh_response = HTTP.headers(
-        user_agent: 'Credence',
+        user_agent: 'CheckHigh',
         authorization: "token #{access_token}",
         accept: 'application/json'
       ).get(ENV['GITHUB_ACCOUNT_URL'])
@@ -22,7 +22,12 @@ module Credence
       raise unless gh_response.status == 200
 
       account = GithubAccount.new(JSON.parse(gh_response))
-      { username: account.username, email: account.email }
+      if account.email.nil?
+        account_email = account.username
+      else
+        account_email = account.email
+      end
+      { username: account.username, email: account_email }
     end
 
     def find_or_create_sso_account(account_data)

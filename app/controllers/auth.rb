@@ -37,16 +37,18 @@ module CheckHigh
         end
       end
 
+      routing.on 'sso' do
       # POST /api/v1/auth/sso
-      routing.post 'sso' do
-        auth_request = JsonRequestBody.parse_symbolize(request.body.read)
+        routing.post do
+          auth_request = JsonRequestBody.parse_symbolize(request.body.read)
 
-        auth_account = AuthorizeSso.new.call(auth_request[:access_token])
-        { data: auth_account }.to_json
-      rescue StandardError => error
-        puts "FAILED to validate Github account: #{error.inspect}"
-        puts error.backtrace
-        routing.halt 400
+          auth_account = AuthorizeSso.new.call(auth_request[:access_token])
+          { data: auth_account }.to_json
+        rescue StandardError => e
+          puts "FAILED to validate Github account: #{e.inspect}"
+          puts e.backtrace
+          routing.halt 400
+        end
       end
     end
   end
