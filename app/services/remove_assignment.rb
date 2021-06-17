@@ -39,7 +39,7 @@ module CheckHigh
       raise NotFoundError unless assignment
       raise RemoveCourse::NotFoundError unless course
 
-      policy = AssignmentPolicy.new(auth[:account], assignment)
+      policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
      
       # Remove assignment from a course 
