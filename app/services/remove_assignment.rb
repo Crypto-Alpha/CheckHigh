@@ -27,7 +27,7 @@ module CheckHigh
       # remove from share boards
       assignment.remove_all_share_boards
       # remove from course
-      if assignment.course != nil then assignment.course.remove_assignment(assignment) end
+      if !assignment.course.nil? then assignment.course.remove_assignment(assignment) end
         auth[:account].remove_owned_assignment(assignment)
 
       #TODO: assignment cannot be removed (sqlite foreign constraints) (wait for solutions)
@@ -38,6 +38,7 @@ module CheckHigh
     def self.call_for_course(auth:, course:, assignment:)
       raise NotFoundError unless assignment
       raise RemoveCourse::NotFoundError unless course
+
       policy = AssignmentPolicy.new(auth[:account], assignment)
       raise ForbiddenError unless policy.can_delete?
      

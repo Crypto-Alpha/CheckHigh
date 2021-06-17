@@ -20,7 +20,7 @@ module CheckHigh
               assi_data = Assignment.find(id: assi_id) 
 
               new_assignment = CreateAssiForSrb.call(
-                account: @auth_account,
+                auth: @auth,
                 share_board: @req_share_board,
                 assignment_data: assi_data
               )
