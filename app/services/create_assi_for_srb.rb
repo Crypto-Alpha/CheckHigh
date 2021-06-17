@@ -18,14 +18,10 @@ module CheckHigh
       end
     end
 
-    def self.call(account:, share_board:, assignment_data:)
-      policy = ShareBoardPolicy.new(account, share_board)
+    def self.call(auth:, share_board:, assignment_data:)
+      policy = ShareBoardPolicy.new(auth[:account], share_board, auth[:scope])
       raise ForbiddenError unless policy.can_add_assignments?
 
-      add_assignment(share_board, assignment_data)
-    end
-
-    def self.add_assignment(share_board, assignment_data)
       share_board.add_assignment(assignment_data)
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError

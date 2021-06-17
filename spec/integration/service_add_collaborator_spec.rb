@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-describe 'Test AddCollaboratorToShareBoard service' do
+describe 'Test AddCollaborator service' do
   before do
     wipe_database
 
@@ -12,17 +12,19 @@ describe 'Test AddCollaboratorToShareBoard service' do
 
     share_board_data = DATA[:share_boards].first
 
+    @owner_data = DATA[:accounts][0]
     @owner = CheckHigh::Account.all[0]
     @collaborator = CheckHigh::Account.all[1]
-    @share_board = CheckHigh::CreateShareBoardForOwner.call(
-      owner_id: @owner.id, share_board_data: share_board_data
-    )
+    @share_board = @owner.add_owned_share_board(share_board_data)
   end
 
   it 'HAPPY: should be able to add a collaborator to a share_board' do
-    CheckHigh::AddCollaboratorToShareBoard.call(
-      email: @collaborator.email,
-      share_board_id: @share_board.id
+    auth = authorization(@owner_data)
+
+    CheckHigh::AddCollaborator.call(
+      auth: auth,
+      share_board: @share_board,
+      collab_email: @collaborator.email
     )
 
     _(@collaborator.share_boards.count).must_equal 1
@@ -30,11 +32,17 @@ describe 'Test AddCollaboratorToShareBoard service' do
   end
 
   it 'BAD: should not add owner as a collaborator' do
+    auth = CheckHigh::AuthenticateAccount.call(
+      username: @owner_data['username'],
+      password: @owner_data['password']
+    )
+
     _(proc {
-      CheckHigh::AddCollaboratorToShareBoard.call(
-        email: @owner.email,
-        share_board_id: @share_board.id
+      CheckHigh::AddCollaborator.call(
+        auth: auth,
+        share_board: @share_board,
+        collab_email: @owner.email
       )
-    }).must_raise CheckHigh::AddCollaboratorToShareBoard::OwnerNotCollaboratorError
+    }).must_raise CheckHigh::AddCollaborator::ForbiddenError
   end
 end

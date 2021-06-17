@@ -6,7 +6,7 @@ Sequel.migration do
   change do
     create_table(:assignments) do
       uuid :id, primary_key: true
-      foreign_key :owner_assignment_id, table: :accounts
+      foreign_key :owner_id, table: :accounts
       foreign_key :course_id, table: :courses
 
       String :assignment_name_secure, null: false, default: ''
@@ -15,7 +15,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
 
-      unique %I[owner_assignment_id assignment_name_secure]
+      unique %I[owner_id assignment_name_secure]
     end
   end
 end

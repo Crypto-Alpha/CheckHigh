@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Add a collaborator to another owner's existing course
-  class GetCourseQuery
-    # Error for owner cannot access
+  # Remove an course
+  class RemoveCourse
+    # Error for owner cannot be collaborator
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to access that course'
+        'You are not allowed to remove that course'
       end
     end
 
@@ -18,13 +18,17 @@ module CheckHigh
     end
 
     def self.call(auth:, course:)
-
       raise NotFoundError unless course
 
       policy = CoursePolicy.new(auth[:account], course, auth[:scope])
-      raise ForbiddenError unless policy.can_view?
+      raise ForbiddenError unless policy.can_delete?
 
-      course.full_details.merge(policies: policy.summary)
+      course.remove_all_assignments
+      auth[:account].remove_owned_course(course)
+
+      #TODO: course cannot be removed (sqlite foreign constraints) (wait for solutions)
+      #deleted_course = course.delete
+      #deleted_course
     end
   end
 end

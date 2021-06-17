@@ -25,7 +25,7 @@ module CheckHigh
     plugin :association_dependencies,
            assignments: :nullify,
            collaborators: :nullify
-
+    # rubocop:disable Metrics/MethodLength
     def to_h
       {
         type: 'share_board',
@@ -34,17 +34,17 @@ module CheckHigh
           share_board_name: share_board_name,
           links: {
             rel: 'assignment_details',
-            # this should show assignments(only id & name) related to this share_board
             href: "#{Api.config.API_HOST}/api/v1/share_boards/#{id}/assignments"
           }
         }
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     def full_details
       to_h.merge(
         relationships: {
-          owner: Account.find(owner_share_board_id).first,
+          owner: owner,
           collaborators: collaborators,
           assignments: assignments
         }
@@ -52,8 +52,7 @@ module CheckHigh
     end
 
     def to_json(options = {})
-      JSON( to_h, options )
+      JSON(to_h, options)
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end
