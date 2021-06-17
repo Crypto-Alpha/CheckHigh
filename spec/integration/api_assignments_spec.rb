@@ -144,7 +144,6 @@ describe 'Test Assignment Handling' do
 
     it 'HAPPY: should be able to create a new assignment' do
       header 'AUTHORIZATION', auth_header(@account_data)
-      # binding.irb
       post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
 
       _(last_response.status).must_equal 201

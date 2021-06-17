@@ -16,8 +16,8 @@ module CheckHigh
         if @current_account == @target_account
           @full_scope
         else
-          @full_scope.select do |proj|
-            includes_collaborator?(proj, @current_account)
+          @full_scope.select do |srb|
+            includes_collaborator?(srb, @current_account)
           end
         end
       end
