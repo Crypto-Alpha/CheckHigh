@@ -11,7 +11,7 @@ module CheckHigh
     end
 
     def authorization(headers)
-      puts headers['AUTHORIZATION']
+      # puts headers['AUTHORIZATION']
       return nil unless headers['AUTHORIZATION']
 
       scheme, auth_token = headers['AUTHORIZATION'].split(' ')

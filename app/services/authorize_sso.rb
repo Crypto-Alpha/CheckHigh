@@ -5,6 +5,13 @@ require 'http'
 module CheckHigh
   # Find or create an SsoAccount based on Github code
   class AuthorizeSso
+    # no public email in github user account
+    class UnauthorizedError < StandardError
+      def message
+        'Invalid Credentials: No Email Address.'
+      end
+    end
+
     def call(access_token)
       github_account = get_github_account(access_token)
       sso_account = find_or_create_sso_account(github_account)
@@ -22,6 +29,8 @@ module CheckHigh
       raise unless gh_response.status == 200
 
       account = GithubAccount.new(JSON.parse(gh_response))
+      raise UnauthorizedError unless account.email
+
       { username: account.username, email: account.email }
     end
 

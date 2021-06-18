@@ -33,7 +33,7 @@ module CheckHigh
           { data: auth_account }.to_json
         rescue AuthenticateAccount::UnauthorizedError => e
           puts [e.class, e.message].join ': '
-          routing.halt '401', { message: 'Invalid credentials' }.to_json
+          routing.halt 401, { message: 'Invalid credentials' }.to_json
         end
       end
 
@@ -44,6 +44,9 @@ module CheckHigh
 
           auth_account = AuthorizeSso.new.call(auth_request[:access_token])
           { data: auth_account }.to_json
+        rescue AuthorizeSso::UnauthorizedError => e
+          puts [e.class, e.message].join ': '
+          routing.halt 401, { message: 'Invalid credentials' }.to_json
         rescue StandardError => e
           puts "FAILED to validate Github account: #{e.inspect}"
           puts e.backtrace
