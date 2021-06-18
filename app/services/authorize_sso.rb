@@ -22,12 +22,7 @@ module CheckHigh
       raise unless gh_response.status == 200
 
       account = GithubAccount.new(JSON.parse(gh_response))
-      if account.email.nil?
-        account_email = account.username
-      else
-        account_email = account.email
-      end
-      { username: account.username, email: account_email }
+      { username: account.username, email: account.email }
     end
 
     def find_or_create_sso_account(account_data)
