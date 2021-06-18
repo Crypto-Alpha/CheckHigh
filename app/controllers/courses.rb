@@ -145,8 +145,7 @@ module CheckHigh
         # return course list
         routing.get do
           courses = CoursePolicy::AccountScope.new(@auth_account).viewable
-          puts courses.inspect
-          { data: courses }.to_json
+          JSON.pretty_generate(data: courses)
         rescue StandardError
           routing.halt 403, { message: 'Could not find any courses' }.to_json
         end
