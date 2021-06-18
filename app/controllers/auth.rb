@@ -12,9 +12,7 @@ module CheckHigh
         # POST api/v1/auth/register
         routing.post do
           reg_data = JsonRequestBody.parse_symbolize(request.body.read)
-          puts reg_data
-          resp = VerifyRegistration.new(reg_data).call
-          puts resp.inspect
+          VerifyRegistration.new(reg_data).call
 
           response.status = 202
           { message: 'Verification email sent' }.to_json
