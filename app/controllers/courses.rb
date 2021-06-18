@@ -144,6 +144,7 @@ module CheckHigh
         # GET api/v1/courses
         # return course list
         routing.get do
+          binding.pry
           courses = CoursePolicy::AccountScope.new(@auth_account).viewable
           JSON.pretty_generate(data: courses)
         rescue StandardError
