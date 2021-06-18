@@ -12,7 +12,7 @@ module CheckHigh
     end
 
     def email
-      @gh_account['email'] || @gh_account['login'] + '@email'
+      @gh_account['email']
     end
   end
 end
