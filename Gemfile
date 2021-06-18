@@ -25,6 +25,7 @@ gem 'sendgrid-ruby'
 
 group :production do
   gem 'pg'
+  gem 'http'
 end
 
 # Testing
@@ -50,5 +51,3 @@ group :development, :test do
   gem 'sqlite3'
 end
 
-# sso
-gem 'http'
