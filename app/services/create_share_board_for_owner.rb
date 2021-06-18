@@ -3,9 +3,16 @@
 module CheckHigh
   # Create new share board for an owner
   class CreateShareBoardForOwner
-    def self.call(owner_id:, share_board_data:)
-      Account.find(id: owner_id)
-             .add_owned_share_board(share_board_data)
+    class ForbiddenError < StandardError
+      def message
+        'You are not allowed to add more assignments'
+      end
+    end
+
+    def self.call(auth:, share_board_data:)
+      raise ForbiddenError unless auth[:scope].can_write?('share_boards')
+
+      auth[:account].add_owned_share_board(share_board_data)
     end
   end
 end

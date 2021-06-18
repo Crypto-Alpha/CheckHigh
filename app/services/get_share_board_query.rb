@@ -17,10 +17,10 @@ module CheckHigh
       end
     end
 
-    def self.call(account:, share_board:)
+    def self.call(auth:, share_board:)
       raise NotFoundError unless share_board
 
-      policy = ShareBoardPolicy.new(account, share_board)
+      policy = ShareBoardPolicy.new(auth[:account], share_board, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
       share_board.full_details.merge(policies: policy.summary)

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../policies/course_policy'
 
 module CheckHigh
   # Create new assignments for a share board
@@ -17,14 +18,10 @@ module CheckHigh
       end
     end
 
-    def self.call(account:, course:, assignment_data:)
-      policy = CoursePolicy.new(account, course)
+    def self.call(auth:, course:, assignment_data:)
+      policy = CoursePolicy.new(auth[:account], course, auth[:scope])
       raise ForbiddenError unless policy.can_add_assignments?
 
-      add_assignment(course, assignment_data)
-    end
-
-    def self.add_assignment(course, assignment_data)
       course.add_assignment(assignment_data)
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError

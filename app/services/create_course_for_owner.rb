@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../policies/account_policy'
 
 # TODO: not sure the logic is right or not.
 module CheckHigh
@@ -18,15 +19,10 @@ module CheckHigh
       end
     end
 
-    def self.call(account:, course_data:)
-      policy = AccountPolicy.new(account, account)
-      raise ForbiddenError unless policy.can_edit?
+    def self.call(auth:, course_data:)
+      raise ForbiddenError unless auth[:scope].can_write?('courses')
 
-      add_owned_course(account, course_data)
-    end
-
-    def self.add_owned_course(account, course_data)
-      account.add_owned_course(course_data)
+      auth[:account].add_owned_course(course_data)
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError
     end
