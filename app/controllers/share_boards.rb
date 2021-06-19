@@ -14,15 +14,15 @@ module CheckHigh
 
         routing.on('assignments') do
           routing.on(String) do |assi_id|
+            @req_assignment = Assignment.find(id: assi_id) 
             # POST api/v1/share_boards/[srb_id]/assignments/[assi_id]
             # create a new assignment to a specific share board
             routing.post do
-              assi_data = Assignment.find(id: assi_id) 
 
               new_assignment = CreateAssiForSrb.call(
                 auth: @auth,
                 share_board: @req_share_board,
-                assignment_data: assi_data
+                assignment_data: @req_assignment
               )
 
               response.status = 201
@@ -36,6 +36,7 @@ module CheckHigh
             # DELETE api/v1/share_boards/[share_board_id]/assignments/[assignment_id]
             # remove an assignment from a share board
             routing.delete do
+              binding.pry
               removed_assignment = RemoveAssignment.call_for_share_board(
                 auth: @auth,
                 share_board: @req_share_board,
