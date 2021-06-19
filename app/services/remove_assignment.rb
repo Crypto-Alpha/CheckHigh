@@ -47,7 +47,7 @@ module CheckHigh
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
      
-      # Remove assignment from a course 
+      # Remove assignment from a share board
       share_board.remove_assignment(assignment)
     end
   end
