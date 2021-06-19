@@ -9,13 +9,13 @@ Sequel.migration do
       foreign_key :owner_id, table: :accounts
       foreign_key :course_id, table: :courses
 
-      String :assignment_name_secure, null: false, default: ''
+      String :assignment_name, null: false, default: ''
       String :content_secure, null: false, default: ''
 
       DateTime :created_at
       DateTime :updated_at
 
-      unique %I[owner_id assignment_name_secure]
+      unique %I[owner_id assignment_name]
     end
   end
 end

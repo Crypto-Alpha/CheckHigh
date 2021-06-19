@@ -24,15 +24,9 @@ module CheckHigh
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
-      # remove from share boards
-      assignment.remove_all_share_boards
-      # remove from course
-      if !assignment.course.nil? then assignment.course.remove_assignment(assignment) end
-        auth[:account].remove_owned_assignment(assignment)
 
-      #TODO: assignment cannot be removed (sqlite foreign constraints) (wait for solutions)
-      #deleted_assignment = assignment.delete
-      #deleted_assignment
+      # real delete
+      deleted_assignment = assignment.destroy
     end
 
     def self.call_for_course(auth:, course:, assignment:)
