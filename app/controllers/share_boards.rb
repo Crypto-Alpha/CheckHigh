@@ -32,6 +32,23 @@ module CheckHigh
               puts "CREATE_ASSIGNMENT_FOR_SHAREBOARD_ERROR: #{e.inspect}"
               routing.halt 500, { message: 'API server error' }.to_json
             end
+
+            # DELETE api/v1/share_boards/[share_board_id]/assignments/[assignment_id]
+            # remove an assignment from a share board
+            routing.delete do
+              removed_assignment = RemoveAssignment.call_for_share_board(
+                auth: @auth,
+                course: @req_share_board,
+                assignment: @req_assignment
+              )
+
+              { message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the share board", data: removed_assignment }.to_json
+            rescue RemoveAssignment::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue StandardError
+              puts "REMOVE_ASSIGNMENT_FROM_SHARE_BOARD_ERROR: #{e.inspect}"
+              routing.halt 500, { message: 'API server error' }.to_json
+            end
           end
 
           # GET api/v1/share_boards/[srb_id]/assignments

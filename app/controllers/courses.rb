@@ -36,7 +36,7 @@ module CheckHigh
             end
 
             # DELETE api/v1/courses/[course_id]/assignments/[assignment_id]
-            # remove an assignment from an course
+            # remove an assignment from a course
             routing.delete do
               removed_assignment = RemoveAssignment.call_for_course(
                 auth: @auth,

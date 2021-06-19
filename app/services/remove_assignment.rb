@@ -39,5 +39,16 @@ module CheckHigh
       # Remove assignment from a course 
       course.remove_assignment(assignment)
     end
+
+    def self.call_for_share_board(auth:, share_board:, assignment:)
+      raise NotFoundError unless assignment
+      raise RemoveShareBoard::NotFoundError unless share_board
+
+      policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
+      raise ForbiddenError unless policy.can_delete?
+     
+      # Remove assignment from a course 
+      share_board.remove_assignment(assignment)
+    end
   end
 end
