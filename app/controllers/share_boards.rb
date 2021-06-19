@@ -14,15 +14,15 @@ module CheckHigh
 
         routing.on('assignments') do
           routing.on(String) do |assi_id|
+            @req_assignment = Assignment.find(id: assi_id) 
             # POST api/v1/share_boards/[srb_id]/assignments/[assi_id]
             # create a new assignment to a specific share board
             routing.post do
-              assi_data = Assignment.find(id: assi_id) 
 
               new_assignment = CreateAssiForSrb.call(
                 auth: @auth,
                 share_board: @req_share_board,
-                assignment_data: assi_data
+                assignment_data: @req_assignment
               )
 
               response.status = 201
@@ -30,6 +30,24 @@ module CheckHigh
               { message: 'Assignment saved', data: new_assignment }.to_json
             rescue StandardError => e
               puts "CREATE_ASSIGNMENT_FOR_SHAREBOARD_ERROR: #{e.inspect}"
+              routing.halt 500, { message: 'API server error' }.to_json
+            end
+
+            # DELETE api/v1/share_boards/[share_board_id]/assignments/[assignment_id]
+            # remove an assignment from a share board
+            routing.delete do
+              binding.pry
+              removed_assignment = RemoveAssignment.call_for_share_board(
+                auth: @auth,
+                share_board: @req_share_board,
+                assignment: @req_assignment
+              )
+
+              { message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the share board", data: removed_assignment }.to_json
+            rescue RemoveAssignment::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue StandardError
+              puts "REMOVE_ASSIGNMENT_FROM_SHARE_BOARD_ERROR: #{e.inspect}"
               routing.halt 500, { message: 'API server error' }.to_json
             end
           end
