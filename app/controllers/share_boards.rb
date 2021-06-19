@@ -38,7 +38,7 @@ module CheckHigh
             routing.delete do
               removed_assignment = RemoveAssignment.call_for_share_board(
                 auth: @auth,
-                course: @req_share_board,
+                share_board: @req_share_board,
                 assignment: @req_assignment
               )
 
