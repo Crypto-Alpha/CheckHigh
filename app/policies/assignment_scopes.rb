@@ -21,7 +21,7 @@ module CheckHigh
       private
 
       def all_lonely_assignments(account)
-        Assignment.where(owner_id: account.id, course_id: nil).all
+        Assignment.where(owner_id: account.id, course_id: nil).order(Sequel.asc(:created_at)).all
       end
     end
     # Scope of course policies
@@ -42,7 +42,7 @@ module CheckHigh
       private
 
       def all_assignments(course)
-        course.assignments
+        course.assignments.sort_by(&:created_at)
       end
     end
     # Scope of share_board policies
@@ -63,7 +63,7 @@ module CheckHigh
       private
 
       def all_assignments(share_board)
-        share_board.assignments
+        share_board.assignments.sort_by(&:created_at)
       end
     end
   end
