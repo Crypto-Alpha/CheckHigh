@@ -34,6 +34,11 @@ module CheckHigh
              email: github_account[:email])
     end
 
+    def self.create_google_account(google_account)
+      create(username: google_account[:username],
+             email: google_account[:email])
+    end
+
     def courses
       owned_courses
     end
