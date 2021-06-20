@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sendgrid-ruby'
+require 'http'
 
 module CheckHigh
   ## Send email verfification email
@@ -9,13 +9,16 @@ module CheckHigh
   class VerifyRegistration
     # Error for invalid registration details
     class InvalidRegistration < StandardError; end
-    include SendGrid
 
     def initialize(registration)
       @registration = registration
     end
 
-    def mail_key() = ENV['SENDGRID_API_KEY']
+    # rubocop:disable Layout/EmptyLineBetweenDefs
+    def from_email() = ENV['SENDGRID_FROM_EMAIL']
+    def mail_api_key() = ENV['SENDGRID_API_KEY']
+    def mail_url() = ENV['SENDGRID_API_URL']
+    # rubocop:enable Layout/EmptyLineBetweenDefs
 
     def call
       raise(InvalidRegistration, 'Username exists') unless username_available?
@@ -41,28 +44,17 @@ module CheckHigh
       END_EMAIL
     end
 
-    def text_email
-      <<~END_EMAIL
-        CheckHigh Registration Received\n\n
-        Please use the following url to validate your email:\n
-        #{@registration[:verification_url]}\n\n
-        You will be asked to set a password to activate your account.
-      END_EMAIL
-    end
-
-    def mail_setup
-      from = Email.new(email: 'checkhigh.app@gmail.com')
-      to = Email.new(email: @registration[:email])
-      subject = 'CheckHigh Registration Verification'
-      content = Content.new(type: 'text/html', value: html_email)
-      Mail.new(from, subject, to, content)
+    def mail_json
+      {
+        personalizations: [{ to: [{ 'email' => @registration[:email] }] }],
+        from: { 'email' => from_email },
+        subject: 'CheckHigh Registration Verification',
+        content: [{ type: 'text/html', value: html_email }]
+      }
     end
 
     def send_email_verification
-      mail = mail_setup
-      sg = SendGrid::API.new(api_key: mail_key)
-      # response = sg.client.mail._('send').post(request_body: mail.to_json)
-      sg.client.mail._('send').post(request_body: mail.to_json)
+      HTTP.auth("Bearer #{mail_api_key}").post(mail_url, json: mail_json)
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
       raise(InvalidRegistration,
