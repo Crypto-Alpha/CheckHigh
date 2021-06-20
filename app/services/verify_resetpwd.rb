@@ -6,12 +6,12 @@ module CheckHigh
   ## Send email verfification email
   # params:
   #   - registration: hash with keys :username :email :verification_url
-  class VerifyRegistration
+  class VerifyResetPwd
     # Error for invalid registration details
-    class InvalidRegistration < StandardError; end
+    class InvalidResetPwd < StandardError; end
 
-    def initialize(registration)
-      @registration = registration
+    def initialize(reset_pwd)
+      @reset_pwd = reset_pwd
     end
 
     # rubocop:disable Layout/EmptyLineBetweenDefs
@@ -21,34 +21,29 @@ module CheckHigh
     # rubocop:enable Layout/EmptyLineBetweenDefs
 
     def call
-      raise(InvalidRegistration, 'Username exists') unless username_available?
-      raise(InvalidRegistration, 'Email already used') unless email_available?
+      raise(InvalidResetPwd, 'Email has not been registration') unless email_available?
 
       send_email_verification
     end
 
-    def username_available?
-      Account.first(username: @registration[:username]).nil?
-    end
-
     def email_available?
-      Account.first(email: @registration[:email]).nil?
+      Account.first(email: @reset_pwd[:email]).exists?
     end
 
     def html_email
       <<~END_EMAIL
-        <H2>CheckHigh App Registration Received</H2>
-        <p>Please <a href=\"#{@registration[:verification_url]}\">click here</a>
+        <H2>CheckHigh App Reseting Password Received</H2>
+        <p>Please <a href=\"#{@reset_pwd[:verification_url]}\">click here</a>
         to validate your email.
-        You will be asked to set a password to activate your account.</p>
+        You will be asked to reset a new password to get your account back.</p>
       END_EMAIL
     end
 
     def mail_json
       {
-        personalizations: [{ to: [{ 'email' => @registration[:email] }] }],
+        personalizations: [{ to: [{ 'email' => @reset_pwd[:email] }] }],
         from: { 'email' => from_email },
-        subject: 'CheckHigh Registration Verification',
+        subject: 'CheckHigh Reseting Password Verification',
         content: [{ type: 'text/html', value: html_email }]
       }
     end
@@ -57,7 +52,7 @@ module CheckHigh
       HTTP.auth("Bearer #{mail_api_key}").post(mail_url, json: mail_json)
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
-      raise(InvalidRegistration,
+      raise(InvalidResetPwd,
             'Could not send verification email; please check email address')
     end
   end

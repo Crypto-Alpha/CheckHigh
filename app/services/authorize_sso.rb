@@ -4,7 +4,7 @@ require 'http'
 
 module CheckHigh
   # Find or create an SsoAccount based on Github code
-  class AuthorizeSso
+  class AuthorizeGithubSso
     # no public email in github user account
     class UnauthorizedError < StandardError
       def message

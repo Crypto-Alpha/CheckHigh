@@ -36,7 +36,6 @@ module CheckHigh
             # DELETE api/v1/share_boards/[share_board_id]/assignments/[assignment_id]
             # remove an assignment from a share board
             routing.delete do
-              binding.pry
               removed_assignment = RemoveAssignment.call_for_share_board(
                 auth: @auth,
                 share_board: @req_share_board,
