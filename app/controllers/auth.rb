@@ -56,6 +56,21 @@ module CheckHigh
           routing.halt 400
         end
       end
+
+      routing.on 'google_sso' do
+      # POST /api/v1/auth/google_sso
+        routing.post do
+          auth_account = AuthorizeGoogleSso.new.call(@request_data[:id_token], @request_data[:aud])
+          { data: auth_account }.to_json
+        rescue AuthorizeGoogleSso::UnauthorizedError => e
+          puts [e.class, e.message].join ': '
+          routing.halt 401, { message: 'Invalid credentials' }.to_json
+        rescue StandardError => e
+          puts "FAILED to validate Google account: #{e.inspect}"
+          puts e.backtrace
+          routing.halt 400
+        end
+      end
     end
   end
 end
