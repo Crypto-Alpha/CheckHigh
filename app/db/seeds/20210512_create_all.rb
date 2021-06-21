@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './app/controllers/helpers.rb'
+require './app/controllers/helpers'
 include CheckHigh::SecureRequestHelpers
 
 Sequel.seed(:development) do
@@ -67,24 +67,23 @@ def create_course_assignments
   assi_info = CheckHigh::Assignment.all
   courses_cycle = CheckHigh::Course.all
   courses_cycle.each do |course|
-
     auth_token = AuthToken.create(course.owner)
     auth = scoped_auth(auth_token)
 
     assi_data = assi_info.find { |assi| assi.owner_id == course.owner_id }
 
-    unless assi_data.nil?
-      CheckHigh::CreateAssiForCourse.call(
-        auth: auth, course: course, assignment_data: assi_data
-      )
-    end
+    next if assi_data.nil?
+
+    CheckHigh::CreateAssiForCourse.call(
+      auth: auth, course: course, assignment_data: assi_data
+    )
   end
 end
 
 def create_shareboard_assignments
   assi_info_each = CheckHigh::Assignment.all.cycle
   share_boards_cycle = CheckHigh::ShareBoard.all.cycle
-  4.times do 
+  4.times do
     assi_info = assi_info_each.next
     share_board = share_boards_cycle.next
 

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Get an assignment 
+  # Get an assignment
   class GetAssignmentQuery
-    # Error for access that assignment 
+    # Error for access that assignment
     class ForbiddenError < StandardError
       def message
         'You are not allowed to access that assignment'
@@ -20,6 +20,7 @@ module CheckHigh
     # Assignment for given requestor account
     def self.call(auth:, assignment:)
       raise NotFoundError unless assignment
+
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 

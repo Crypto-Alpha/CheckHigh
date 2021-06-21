@@ -13,9 +13,7 @@ module CheckHigh
       end
 
       def viewable
-        if @current_account == @target_account
-          @full_scope
-        end
+        @full_scope if @current_account == @target_account
       end
 
       private

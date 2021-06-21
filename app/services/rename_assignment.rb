@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Rename assignment's name 
+  # Rename assignment's name
   class RenameAssignment
-    # Error for access that assignment 
+    # Error for access that assignment
     class ForbiddenError < StandardError
       def message
         'You are not allowed to access that assignment'
@@ -20,7 +20,7 @@ module CheckHigh
     # Assignment for given requestor account
     def self.call(auth:, assignment:, new_name:)
       raise NotFoundError unless assignment
-      
+
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_edit?
 

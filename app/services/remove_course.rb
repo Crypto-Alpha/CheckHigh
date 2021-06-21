@@ -24,7 +24,7 @@ module CheckHigh
       raise ForbiddenError unless policy.can_delete?
 
       # real delete
-      deleted_course = course.destroy
+      course.destroy
     end
   end
 end

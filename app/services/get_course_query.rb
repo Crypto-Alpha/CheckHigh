@@ -18,7 +18,6 @@ module CheckHigh
     end
 
     def self.call(auth:, course:)
-
       raise NotFoundError unless course
 
       policy = CoursePolicy.new(auth[:account], course, auth[:scope])

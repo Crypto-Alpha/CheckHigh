@@ -21,8 +21,8 @@ gem 'hirb', '~>0'
 gem 'sequel', '~>5'
 
 group :production do
-  gem 'pg'
   gem 'http'
+  gem 'pg'
 end
 
 # Testing

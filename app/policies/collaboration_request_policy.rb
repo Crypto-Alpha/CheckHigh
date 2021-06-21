@@ -29,7 +29,7 @@ module CheckHigh
     end
 
     def target_is_collaborator?
-     @share_board.collaborators.include?(@target_account)
+      @share_board.collaborators.include?(@target_account)
     end
   end
 end

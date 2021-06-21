@@ -13,9 +13,7 @@ module CheckHigh
       end
 
       def viewable
-        if @current_account == @target_account
-        @full_scope
-        end
+        @full_scope if @current_account == @target_account
       end
 
       private
@@ -24,6 +22,7 @@ module CheckHigh
         Assignment.where(owner_id: account.id, course_id: nil).order(Sequel.asc(:created_at)).all
       end
     end
+
     # Scope of course policies
     class CourseScope
       def initialize(current_course, target_course = nil)
@@ -34,9 +33,7 @@ module CheckHigh
       end
 
       def viewable
-        if @current_course == @target_course
-          @full_scope
-        end
+        @full_scope if @current_course == @target_course
       end
 
       private
@@ -45,6 +42,7 @@ module CheckHigh
         course.assignments.sort_by(&:created_at)
       end
     end
+
     # Scope of share_board policies
     class ShareBoardScope
       def initialize(current_share_board, target_share_board = nil)
@@ -55,9 +53,7 @@ module CheckHigh
       end
 
       def viewable
-        if @current_share_board == @target_share_board
-          @full_scope
-        end
+        @full_scope if @current_share_board == @target_share_board
       end
 
       private

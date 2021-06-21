@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'remove_course'
 
 module CheckHigh
@@ -24,9 +25,8 @@ module CheckHigh
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
-
       # real delete
-      deleted_assignment = assignment.destroy
+      assignment.destroy
     end
 
     def self.call_for_course(auth:, course:, assignment:)
@@ -35,8 +35,8 @@ module CheckHigh
 
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
-     
-      # Remove assignment from a course 
+
+      # Remove assignment from a course
       course.remove_assignment(assignment)
     end
 
@@ -46,7 +46,7 @@ module CheckHigh
 
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
-     
+
       # Remove assignment from a share board
       share_board.remove_assignment(assignment)
     end

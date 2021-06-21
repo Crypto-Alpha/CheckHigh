@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Rename share board's name 
+  # Rename share board's name
   class RenameShareBoard
-    # Error for access that share board 
+    # Error for access that share board
     class ForbiddenError < StandardError
       def message
         'You are not allowed to access that share board'

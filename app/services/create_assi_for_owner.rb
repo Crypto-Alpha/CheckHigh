@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../policies/account_policy'
 
 module CheckHigh
@@ -22,7 +23,7 @@ module CheckHigh
       raise ForbiddenError unless auth[:scope].can_write?('assignments')
 
       # check if assignment name is the same, if assignment name is the same then cover the original content
-      exist_assi = Assignment.find(owner_id: auth[:account].id, assignment_name: assignment_data["assignment_name"])
+      exist_assi = Assignment.find(owner_id: auth[:account].id, assignment_name: assignment_data['assignment_name'])
       if exist_assi.nil?
         auth[:account].add_owned_assignment(assignment_data)
       else

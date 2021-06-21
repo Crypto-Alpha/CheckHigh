@@ -18,7 +18,7 @@ class AccountPolicy
   def can_delete?
     self_request?
   end
-  
+
   def summary
     {
       can_view: can_view?,
@@ -28,7 +28,7 @@ class AccountPolicy
   end
 
   private
-  
+
   def self_request?
     @requestor == @this_account
   end

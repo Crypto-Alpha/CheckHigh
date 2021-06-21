@@ -15,12 +15,11 @@ module CheckHigh
 
         routing.on('assignments') do
           routing.on(String) do |assignment_id|
-            @req_assignment = Assignment.find(id: assignment_id) 
+            @req_assignment = Assignment.find(id: assignment_id)
 
             # PUT api/v1/courses/[course_id]/assignments/[assignment_id]
             # move assignments into new course
             routing.put do
-
               new_assignment = CreateAssiForCourse.call(
                 auth: @auth,
                 course: @req_course,
@@ -44,7 +43,8 @@ module CheckHigh
                 assignment: @req_assignment
               )
 
-              { message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the course", data: removed_assignment }.to_json
+              { message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the course",
+                data: removed_assignment }.to_json
             rescue RemoveAssignment::ForbiddenError => e
               routing.halt 403, { message: e.message }.to_json
             rescue StandardError
@@ -129,9 +129,9 @@ module CheckHigh
             course: @req_course
           )
 
-          { 
+          {
             message: "Your course '#{deleted_course.course_name}' has been deleted permanently",
-            data: deleted_course 
+            data: deleted_course
           }.to_json
         rescue RemoveCourse::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json

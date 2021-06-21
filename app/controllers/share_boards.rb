@@ -14,11 +14,10 @@ module CheckHigh
 
         routing.on('assignments') do
           routing.on(String) do |assi_id|
-            @req_assignment = Assignment.find(id: assi_id) 
+            @req_assignment = Assignment.find(id: assi_id)
             # POST api/v1/share_boards/[srb_id]/assignments/[assi_id]
             # create a new assignment to a specific share board
             routing.post do
-
               new_assignment = CreateAssiForSrb.call(
                 auth: @auth,
                 share_board: @req_share_board,
@@ -42,7 +41,9 @@ module CheckHigh
                 assignment: @req_assignment
               )
 
-              { message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the share board", data: removed_assignment }.to_json
+              {
+                message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the share board", data: removed_assignment
+              }.to_json
             rescue RemoveAssignment::ForbiddenError => e
               routing.halt 403, { message: e.message }.to_json
             rescue StandardError

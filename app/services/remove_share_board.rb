@@ -23,9 +23,8 @@ module CheckHigh
       policy = ShareBoardPolicy.new(auth[:account], share_board, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
-
       # real delete
-      deleted_share_board = share_board.destroy
+      share_board.destroy
     end
   end
 end
