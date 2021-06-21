@@ -26,9 +26,8 @@ module CheckHigh
       if exist_assi.nil?
         auth[:account].add_owned_assignment(assignment_data)
       else
-        exist_assi.update(content: assignment_data["content"])
+        exist_assi.update(content: assignment_data['content'])
       end
-
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError
     end

@@ -20,9 +20,6 @@ gem 'rbnacl', '~>7'
 gem 'hirb', '~>0'
 gem 'sequel', '~>5'
 
-# Email sending
-gem 'sendgrid-ruby'
-
 group :production do
   gem 'pg'
   gem 'http'
@@ -51,3 +48,5 @@ group :development, :test do
   gem 'sqlite3'
 end
 
+# Google Oauth Id Verify
+gem 'google-id-token'

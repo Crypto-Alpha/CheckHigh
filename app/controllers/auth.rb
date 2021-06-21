@@ -42,18 +42,60 @@ module CheckHigh
         end
       end
 
-      routing.on 'sso' do
-      # POST /api/v1/auth/sso
+      # POST /api/v1/auth/github_sso
+      routing.on 'github_sso' do
         routing.post do
-          auth_account = AuthorizeSso.new.call(@request_data[:access_token])
+          auth_account = AuthorizeGithubSso.new.call(@request_data[:access_token])
           { data: auth_account }.to_json
-        rescue AuthorizeSso::UnauthorizedError => e
+        rescue AuthorizeGithubSso::UnauthorizedError => e
           puts [e.class, e.message].join ': '
           routing.halt 401, { message: 'Invalid credentials' }.to_json
         rescue StandardError => e
           puts "FAILED to validate Github account: #{e.inspect}"
           puts e.backtrace
           routing.halt 400
+        end
+      end
+
+      # POST /api/v1/auth/google_sso
+      routing.on 'google_sso' do
+        routing.post do
+          auth_account = AuthorizeGoogleSso.new.call(@request_data[:id_token], @request_data[:aud])
+          { data: auth_account }.to_json
+        rescue AuthorizeGoogleSso::UnauthorizedError => e
+          puts [e.class, e.message].join ': '
+          routing.halt 401, { message: 'Invalid credentials' }.to_json
+        rescue StandardError => e
+          puts "FAILED to validate Google account: #{e.inspect}"
+          puts e.backtrace
+          routing.halt 400
+        end
+      end
+
+      # POST api/v1/auth/resetpwd
+      routing.on 'resetpwd' do
+        routing.post do
+          VerifyResetPwd.new(@request_data).call
+
+          response.status = 202
+          { message: 'Verification email sent' }.to_json
+        rescue VerifyResetPwd::InvalidResetPwd => e
+          routing.halt 400, { message: e.message }.to_json
+        rescue StandardError => e
+          puts "ERROR VERIFYING REGISTRATION: #{e.inspect}"
+          puts e.message
+          routing.halt 500
+        end
+      end
+
+      # POST /api/v1/auth/username
+      routing.on 'username' do
+        routing.post do
+          auth_resetpwd_account = GetUsername.call(@request_data)
+          { data: auth_resetpwd_account }.to_json
+        rescue GetUsername::NotFoundError => e
+          puts [e.class, e.message].join ': '
+          routing.halt 404, { message: 'Invalid account of email' }.to_json
         end
       end
     end
