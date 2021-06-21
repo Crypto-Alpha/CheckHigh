@@ -5,9 +5,9 @@ require 'http'
 module CheckHigh
   ## Send email verfification email
   # params:
-  #   - registration: hash with keys :username :email :verification_url
+  #   - reset pwd: hash with keys :email :verification_url
   class VerifyResetPwd
-    # Error for invalid registration details
+    # Error for invalid reset pwd details
     class InvalidResetPwd < StandardError; end
 
     def initialize(reset_pwd)
@@ -21,13 +21,13 @@ module CheckHigh
     # rubocop:enable Layout/EmptyLineBetweenDefs
 
     def call
-      raise(InvalidResetPwd, 'Email has not been registration') unless email_available?
+      raise(InvalidResetPwd, 'Account does not exist') unless email_available?
 
       send_email_verification
     end
 
     def email_available?
-      Account.first(email: @reset_pwd[:email]).exists?
+      !Account.first(email: @reset_pwd[:email]).nil?
     end
 
     def html_email
