@@ -89,17 +89,6 @@ module CheckHigh
           routing.halt 500
         end
       end
-
-      # POST /api/v1/auth/username
-      routing.on 'username' do
-        routing.post do
-          auth_resetpwd_account = GetUsername.call(@request_data)
-          { data: auth_resetpwd_account }.to_json
-        rescue GetUsername::NotFoundError => e
-          puts [e.class, e.message].join ': '
-          routing.halt 404, { message: 'Invalid account of email' }.to_json
-        end
-      end
     end
   end
 end

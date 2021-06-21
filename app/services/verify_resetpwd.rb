@@ -5,9 +5,9 @@ require 'http'
 module CheckHigh
   ## Send email verfification email
   # params:
-  #   - registration: hash with keys :username :email :verification_url
+  #   - reset pwd: hash with keys :email :verification_url
   class VerifyResetPwd
-    # Error for invalid registration details
+    # Error for invalid reset pwd details
     class InvalidResetPwd < StandardError; end
 
     def initialize(reset_pwd)
