@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Rename course's name 
+  # Rename course's name
   class RenameCourse
-    # Error for access that course 
+    # Error for access that course
     class ForbiddenError < StandardError
       def message
         'You are not allowed to access that course'

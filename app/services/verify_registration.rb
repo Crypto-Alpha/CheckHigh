@@ -22,7 +22,7 @@ module CheckHigh
 
     def call
       raise(InvalidRegistration, 'Username exists') unless username_available?
-      raise(InvalidRegistration, 'Email already used') unless email_available?
+      raise(InvalidRegistration, 'Account exists') unless email_available?
 
       send_email_verification
     end

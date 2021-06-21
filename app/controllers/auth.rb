@@ -12,7 +12,7 @@ module CheckHigh
       begin
         @request_data = SignedRequest.new(Api.config).parse(request.body.read)
       rescue SignedRequest::VerificationError
-        routing.halt 403, { message: 'Must sign request'}.to_json
+        routing.halt 403, { message: 'Must sign request' }.to_json
       end
 
       routing.on 'register' do
@@ -23,6 +23,7 @@ module CheckHigh
           response.status = 202
           { message: 'Verification email sent' }.to_json
         rescue VerifyRegistration::InvalidRegistration => e
+          puts [e.class, e.message].join ': '
           routing.halt 400, { message: e.message }.to_json
         rescue StandardError => e
           puts "ERROR VERIFYING REGISTRATION: #{e.inspect}"
@@ -80,6 +81,7 @@ module CheckHigh
           response.status = 202
           { message: 'Verification email sent' }.to_json
         rescue VerifyResetPwd::InvalidResetPwd => e
+          puts [e.class, e.message].join ': '
           routing.halt 400, { message: e.message }.to_json
         rescue StandardError => e
           puts "ERROR VERIFYING REGISTRATION: #{e.inspect}"
