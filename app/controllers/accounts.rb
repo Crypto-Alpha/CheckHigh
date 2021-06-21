@@ -28,10 +28,10 @@ module CheckHigh
         end
       end
 
+      # GET api/v1/accounts/[username]
       routing.on String do |username|
         routing.halt(403, UNAUTH_MSG) unless @auth_account
 
-        # GET api/v1/accounts/[username]
         routing.get do
           auth = AuthorizeAccount.call(
             auth: @auth, username: username,
