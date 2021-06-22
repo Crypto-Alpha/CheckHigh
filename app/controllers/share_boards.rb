@@ -87,6 +87,22 @@ module CheckHigh
         end
 
         routing.on('collaborators') do
+          # POST api/v1/share_boards/[srb_id]/collaborators
+          routing.post do
+            req_data = SignedRequest.new(Api.config).parse(request.body.read)
+            InviteCollaborator.new(req_data).call(
+              auth: @auth,
+              share_board: @req_share_board
+            )
+
+            response.status = 202
+            { message: 'Invitation email sent' }.to_json
+          rescue InviteCollaborator::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+
           # PUT api/v1/share_boards/[srb_id]/collaborators
           routing.put do
             req_data = JSON.parse(routing.body.read)
