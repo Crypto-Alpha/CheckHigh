@@ -3,22 +3,23 @@
 module CheckHigh
   # Policy to determine if account can view a assignment
   class AssignmentPolicy
-    def initialize(account, assignment)
+    def initialize(account, assignment, auth_scope = nil)
       @account = account
       @assignment = assignment
+      @auth_scope = auth_scope
     end
 
     # collaborator only can VIEW the other's assignment
     def can_view?
-      account_owns_assignment? || account_collaborates_on_share_board?
+      can_read? && (account_owns_assignment? || account_collaborates_on_share_board?)
     end
 
     def can_edit?
-      account_owns_assignment?
+      can_write? && account_owns_assignment?
     end
 
     def can_delete?
-      account_owns_assignment?
+      can_write? && account_owns_assignment?
     end
 
     def summary
@@ -30,6 +31,14 @@ module CheckHigh
     end
 
     private
+
+    def can_read?
+      @auth_scope ? @auth_scope.can_read?('assignments') : false
+    end
+
+    def can_write?
+      @auth_scope ? @auth_scope.can_write?('assignments') : false
+    end
 
     def account_owns_assignment?
       @assignment.owner_id == @account.id

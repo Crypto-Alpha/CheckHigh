@@ -10,12 +10,12 @@ module CheckHigh
 
       @assi_route = "#{@api_root}/assignments"
 
-      # GET api/v1/assignments/[assi_id]
       routing.on String do |assi_id|
         @req_assignment = Assignment.first(id: assi_id)
 
+        # GET api/v1/assignments/[assi_id]
         routing.get do
-          assignment = GetAssignmentQuery.call(requestor: @auth_account, assignment: @req_assignment)
+          assignment = GetAssignmentQuery.call(auth: @auth, assignment: @req_assignment)
           { data: assignment }.to_json
         rescue GetAssignmentQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
@@ -23,6 +23,41 @@ module CheckHigh
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
           puts "GET ASSIGNMENT ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # PUT api/v1/assignments/[assi_id]
+        routing.put do
+          # rename assignment's name
+          req_data = JSON.parse(routing.body.read)
+
+          assignment = RenameAssignment.call(
+            auth: @auth,
+            assignment: @req_assignment,
+            new_name: req_data['new_name']
+          )
+
+          { data: assignment }.to_json
+        rescue RenameAssignment::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue RenameAssignment::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # DELETE api/v1/assignments/[assi_id]
+        routing.delete do
+          deleted_assignment = RemoveAssignment.call(
+            auth: @auth,
+            assignment: @req_assignment
+          )
+
+          { message: "Your assignment '#{deleted_assignment.assignment_name}' has been deleted permanently",
+            data: deleted_assignment }.to_json
+        rescue RemoveAssignment::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
           routing.halt 500, { message: 'API server error' }.to_json
         end
       end
@@ -41,7 +76,7 @@ module CheckHigh
         # create a lonely assignment
         routing.post do
           new_assignment = CreateAssiForOwner.call(
-            account: @auth_account,
+            auth: @auth,
             assignment_data: JSON.parse(routing.body.read)
           )
 

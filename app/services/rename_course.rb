@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Add a collaborator to another owner's existing course
-  class GetCourseQuery
-    # Error for owner cannot access
+  # Rename course's name
+  class RenameCourse
+    # Error for access that course
     class ForbiddenError < StandardError
       def message
         'You are not allowed to access that course'
@@ -17,13 +17,14 @@ module CheckHigh
       end
     end
 
-    def self.call(auth:, course:)
+    # Share board for given requestor account
+    def self.call(auth:, course:, new_name:)
       raise NotFoundError unless course
 
       policy = CoursePolicy.new(auth[:account], course, auth[:scope])
-      raise ForbiddenError unless policy.can_view?
+      raise ForbiddenError unless policy.can_edit?
 
-      course.full_details.merge(policies: policy.summary)
+      course.update(course_name: new_name)
     end
   end
 end

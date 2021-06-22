@@ -11,12 +11,12 @@ module CheckHigh
       end
 
       def message
-        "Invalid Credentials for: #{@credentials[:username]}"
+        "Invalid Credentials for: #{@credentials[:email]}"
       end
     end
 
     def self.call(credentials)
-      account = Account.first(username: credentials[:username])
+      account = Account.first(email: credentials[:email])
       raise unless account.password?(credentials[:password])
 
       account_and_token(account)

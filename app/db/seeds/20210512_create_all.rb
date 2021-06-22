@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require './app/controllers/helpers'
+include CheckHigh::SecureRequestHelpers
+
 Sequel.seed(:development) do
   def run
     puts 'Seeding accounts, courses, share boards, assignments'
@@ -35,10 +38,7 @@ def create_owned_courses
     account = CheckHigh::Account.first(username: owner['username'])
     owner['course_name'].each do |course_name|
       course_data = COURSE_INFO.find { |course| course['course_name'] == course_name }
-      CheckHigh::CreateCourseForOwner.call(
-        # new service logic
-        account: account, course_data: course_data
-      )
+      account.add_owned_course(course_data)
     end
   end
 end
@@ -48,10 +48,7 @@ def create_owned_share_boards
     account = CheckHigh::Account.first(username: owner['username'])
     owner['share_board_name'].each do |share_board_name|
       srb_data = SHARE_BOARD_INFO.find { |srb| srb['share_board_name'] == share_board_name }
-      CheckHigh::CreateShareBoardForOwner.call(
-        #TODO: new service logic not added
-        owner_id: account.id, share_board_data: srb_data
-      )
+      account.add_owned_share_board(srb_data)
     end
   end
 end
@@ -61,10 +58,7 @@ def create_owned_assignments
     account = CheckHigh::Account.first(username: owner['username'])
     owner['assignment_name'].each do |assignment_name|
       assi_data = ASSIGNMENT_INFO.find { |assi| assi['assignment_name'] == assignment_name }
-      CheckHigh::CreateAssiForOwner.call(
-        # new service logic
-        account: account, assignment_data: assi_data
-      )
+      account.add_owned_assignment(assi_data)
     end
   end
 end
@@ -73,27 +67,31 @@ def create_course_assignments
   assi_info = CheckHigh::Assignment.all
   courses_cycle = CheckHigh::Course.all
   courses_cycle.each do |course|
+    auth_token = AuthToken.create(course.owner)
+    auth = scoped_auth(auth_token)
+
     assi_data = assi_info.find { |assi| assi.owner_id == course.owner_id }
-    if !assi_data.nil?
-      owner = CheckHigh::Account.find(id: course.owner_id)
-      CheckHigh::CreateAssiForCourse.call(
-        account: owner, course: course, assignment_data: assi_data
-      )
-    end
+
+    next if assi_data.nil?
+
+    CheckHigh::CreateAssiForCourse.call(
+      auth: auth, course: course, assignment_data: assi_data
+    )
   end
 end
 
 def create_shareboard_assignments
   assi_info_each = CheckHigh::Assignment.all.cycle
   share_boards_cycle = CheckHigh::ShareBoard.all.cycle
-  4.times do 
+  4.times do
     assi_info = assi_info_each.next
     share_board = share_boards_cycle.next
-    # 這邊應該collaborator或owner都可以新增assignment
-    # 為了方便這邊用owner的account data
-    owner = CheckHigh::Account.find(id: share_board.owner_id)
+
+    auth_token = AuthToken.create(share_board.owner)
+    auth = scoped_auth(auth_token)
+
     CheckHigh::CreateAssiForSrb.call(
-      account: owner, share_board: share_board, assignment_data: assi_info
+      auth: auth, share_board: share_board, assignment_data: assi_info
     )
   end
 end
@@ -102,10 +100,13 @@ def add_collaborators
   collabor_info = COLLABOR_INFO
   collabor_info.each do |collabor|
     share_board = CheckHigh::ShareBoard.first(share_board_name: collabor['share_board_name'])
+
+    auth_token = AuthToken.create(share_board.owner)
+    auth = scoped_auth(auth_token)
+
     collabor['collaborator_email'].each do |email|
-      owner = CheckHigh::Account.first(id: share_board.owner_id) 
       CheckHigh::AddCollaborator.call(
-        account: owner, share_board: share_board, collab_email: email
+        auth: auth, share_board: share_board, collab_email: email
       )
     end
   end

@@ -3,7 +3,6 @@
 require_relative '../spec_helper'
 
 describe 'Test ShareBoards Handling' do
-
   before do
     wipe_database
 

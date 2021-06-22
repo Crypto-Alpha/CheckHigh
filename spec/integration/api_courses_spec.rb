@@ -3,7 +3,6 @@
 require_relative '../spec_helper'
 
 describe 'Test Course Handling' do
-
   before do
     wipe_database
 
@@ -63,9 +62,9 @@ describe 'Test Course Handling' do
 
     it 'HAPPY: should return the right number of assignments related to a specific course' do
       auth = CheckHigh::AuthenticateAccount.call(
-          username: @account_data['username'],
-          password: @account_data['password']
-        )
+        username: @account_data['username'],
+        password: @account_data['password']
+      )
 
       crs = @account.add_owned_course(DATA[:courses][0])
       # create assignments related to the new created course
@@ -135,7 +134,7 @@ describe 'Test Course Handling' do
       _(created).must_be_nil
     end
 
-    it 'SECURITY: should not create project with mass assignment' do
+    it 'SECURITY: should not create courses with mass assignment' do
       bad_data = @crs_data.clone
       bad_data['created_at'] = '1900-01-01'
 

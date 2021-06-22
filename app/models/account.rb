@@ -29,6 +29,16 @@ module CheckHigh
 
     plugin :timestamps, update_on_create: true
 
+    def self.create_github_account(github_account)
+      create(username: github_account[:username],
+             email: github_account[:email])
+    end
+
+    def self.create_google_account(google_account)
+      create(username: google_account[:username],
+             email: google_account[:email])
+    end
+
     def courses
       owned_courses
     end
