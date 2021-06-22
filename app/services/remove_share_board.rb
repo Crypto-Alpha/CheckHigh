@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Add a collaborator to another owner's existing share_board
-  class GetShareBoardQuery
+  # Remove an share board
+  class RemoveShareBoard
     # Error for owner cannot be collaborator
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to access that share_board'
+        'You are not allowed to remove that share board'
       end
     end
 
-    # Error for cannot find a share_board
+    # Error for cannot find a share board
     class NotFoundError < StandardError
       def message
-        'We could not find that share_board'
+        'We could not find that share board'
       end
     end
 
@@ -21,9 +21,10 @@ module CheckHigh
       raise NotFoundError unless share_board
 
       policy = ShareBoardPolicy.new(auth[:account], share_board, auth[:scope])
-      raise ForbiddenError unless policy.can_view?
+      raise ForbiddenError unless policy.can_delete?
 
-      share_board.full_details.merge(policies: policy.summary)
+      # real delete
+      share_board.destroy
     end
   end
 end

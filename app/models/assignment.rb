@@ -19,15 +19,6 @@ module CheckHigh
     plugin :association_dependencies, share_boards: :nullify
     set_allowed_columns :assignment_name, :content
 
-    # Secure getters and setters
-    def assignment_name
-      SecureDB.decrypt(assignment_name_secure)
-    end
-
-    def assignment_name=(plaintext)
-      self.assignment_name_secure = SecureDB.encrypt(plaintext)
-    end
-
     def content
       SecureDB.decrypt(content_secure)
     end
@@ -36,19 +27,33 @@ module CheckHigh
       self.content_secure = SecureDB.encrypt(plaintext)
     end
 
-    def to_json(options = {})
-      # for showing assignment details or create a new assignment
-      JSON(
-        {
-          type: 'assignment',
-          attributes: {
-            id: id,
-            assignment_name: assignment_name,
-            content: content,
-            upload_time: created_at
-          }
-        }, options
+    # rubocop:disable Metrics/MethodLength
+    def to_h
+      {
+        type: 'assignment',
+        attributes: {
+          id: id,
+          assignment_name: assignment_name,
+          content: content,
+          upload_time: created_at
+        }, include: {
+          owner: owner
+        }
+      }
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          course: course,
+          share_boards: share_boards
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

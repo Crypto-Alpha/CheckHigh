@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module CheckHigh
-  # Add a collaborator to another owner's existing course
-  class GetCourseQuery
-    # Error for owner cannot access
+  # Remove an course
+  class RemoveCourse
+    # Error for owner cannot be collaborator
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to access that course'
+        'You are not allowed to remove that course'
       end
     end
 
@@ -21,9 +21,10 @@ module CheckHigh
       raise NotFoundError unless course
 
       policy = CoursePolicy.new(auth[:account], course, auth[:scope])
-      raise ForbiddenError unless policy.can_view?
+      raise ForbiddenError unless policy.can_delete?
 
-      course.full_details.merge(policies: policy.summary)
+      # real delete
+      course.destroy
     end
   end
 end

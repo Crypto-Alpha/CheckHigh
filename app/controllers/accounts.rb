@@ -9,12 +9,36 @@ module CheckHigh
     route('accounts') do |routing|
       @account_route = "#{@api_root}/accounts"
 
+      # POST api/v1/accounts/resetpwd
+      routing.on 'resetpwd' do
+        routing.post do
+          account_data = SignedRequest.new(Api.config).parse(request.body.read)
+          account = Account.find(email: account_data[:email]).update(account_data)
+
+          response.status = 201
+          response['Location'] = "#{@account_route}/#{account.username}"
+          { message: 'Account saved', data: account }.to_json
+        rescue Sequel::MassAssignmentRestriction
+          routing.halt 400, { message: 'Illegal Attributes' }.to_json
+        rescue SignedRequest::VerificationError
+          routing.hatl 403, { message: 'Must sign request' }.to_json
+        rescue StandardError => e
+          puts "ERROR CREATING ACCOUNT: #{e.inspect}"
+          routing.halt 500, { message: 'Error creating account' }.to_json
+        end
+      end
+
+      # GET api/v1/accounts/[username]
       routing.on String do |username|
-        # GET api/v1/accounts/[username]
+        routing.halt(403, UNAUTH_MSG) unless @auth_account
+
         routing.get do
-          account = GetAccountQuery.call(requestor: @auth_account, username: username)
-          account.to_json
-        rescue GetAccountQuery::ForbiddenError => e
+          auth = AuthorizeAccount.call(
+            auth: @auth, username: username,
+            auth_scope: AuthScope.new(AuthScope::READ_ONLY)
+          )
+          { data: auth }.to_json
+        rescue AuthorizeAccount::ForbiddenError => e
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
           puts "GET ACCOUNT ERROR: #{e.inspect}"
@@ -24,18 +48,19 @@ module CheckHigh
 
       # POST api/v1/accounts
       routing.post do
-        new_data = JSON.parse(routing.body.read)
-        new_account = Account.new(new_data)
-        raise('Could not save account') unless new_account.save
+        account_data = SignedRequest.new(Api.config).parse(request.body.read)
+        new_account = Account.create(account_data)
 
         response.status = 201
         response['Location'] = "#{@account_route}/#{new_account.username}"
         { message: 'Account saved', data: new_account }.to_json
       rescue Sequel::MassAssignmentRestriction
-        routing.halt 400, { message: 'Illegal Request' }.to_json
+        routing.halt 400, { message: 'Illegal Attributes' }.to_json
+      rescue SignedRequest::VerificationError
+        routing.hatl 403, { message: 'Must sign request' }.to_json
       rescue StandardError => e
-        puts error.inspect
-        routing.halt 500, { message: e.message }.to_json
+        puts "ERROR CREATING ACCOUNT: #{e.inspect}"
+        routing.halt 500, { message: 'Error creating account' }.to_json
       end
     end
   end

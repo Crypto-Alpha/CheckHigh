@@ -20,10 +20,8 @@ gem 'rbnacl', '~>7'
 gem 'hirb', '~>0'
 gem 'sequel', '~>5'
 
-# Email sending
-gem 'sendgrid-ruby'
-
 group :production do
+  gem 'http'
   gem 'pg'
 end
 
@@ -31,6 +29,7 @@ end
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
+  gem 'webmock'
 end
 
 # Debugging
@@ -48,3 +47,6 @@ group :development, :test do
   gem 'sequel-seed'
   gem 'sqlite3'
 end
+
+# Google Oauth Id Verify
+gem 'google-id-token'

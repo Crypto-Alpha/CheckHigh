@@ -6,14 +6,14 @@ Sequel.migration do
   change do
     create_table(:courses) do
       primary_key :id
-      foreign_key :owner_course_id, :accounts
+      foreign_key :owner_id, :accounts
 
       String :course_name, null: false, default: ''
 
       DateTime :created_at
       DateTime :updated_at
 
-      unique %I[owner_course_id course_name]
+      unique %I[owner_id course_name]
     end
   end
 end
