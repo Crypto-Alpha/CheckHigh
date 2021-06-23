@@ -19,7 +19,8 @@ module CheckHigh
       private
 
       def all_lonely_assignments(account)
-        Assignment.where(owner_id: account.id, course_id: nil).order(Sequel.asc(:created_at)).all
+        Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at)
+          .where(owner_id: account.id, course_id: nil).order(Sequel.asc(:created_at)).all
       end
     end
 
@@ -39,7 +40,12 @@ module CheckHigh
       private
 
       def all_assignments(course)
-        course.assignments.sort_by(&:created_at)
+        assis = course.assignments
+        if assis.count != 0
+          assis.sort_by(&:created_at).map do |assignment|
+            ParseAssignmentData.get_metadata(assignment)
+          end
+        else [] end
       end
     end
 
@@ -59,7 +65,12 @@ module CheckHigh
       private
 
       def all_assignments(share_board)
-        share_board.assignments.sort_by(&:created_at)
+        assis = share_board.assignments
+        if assis.count != 0
+          assis.sort_by(&:created_at).map do |assignment|
+            ParseAssignmentData.get_metadata_from_db(assignment)
+          end
+        else [] end
       end
     end
   end
