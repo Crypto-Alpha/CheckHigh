@@ -46,7 +46,7 @@ module CheckHigh
       # POST /api/v1/auth/github_sso
       routing.on 'github_sso' do
         routing.post do
-          binding.irb
+          # binding.irb
           auth_account = AuthorizeGithubSso.new.call(@request_data[:access_token])
           
           { data: auth_account }.to_json

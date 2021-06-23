@@ -24,6 +24,7 @@ module CheckHigh
       raise UnauthorizedError unless aud == config.GOOGLE_CLIENT_ID
 
       payload = validator.check(id_token, aud)
+      binding.irb
 
       raise UnauthorizedError unless payload['iss'].include?(config.GOOGLE_ACCOUNT_DOMAIN)
       raise UnauthorizedError unless payload['exp'] > Time.now.to_i
