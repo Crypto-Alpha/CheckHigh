@@ -48,7 +48,6 @@ module CheckHigh
 
       # POST api/v1/accounts
       routing.post do
-        binding.irb
         account_data = SignedRequest.new(Api.config).parse(request.body.read)
         new_account = CreateAccount.new(account_data).call
 
