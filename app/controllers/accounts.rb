@@ -49,11 +49,14 @@ module CheckHigh
       # POST api/v1/accounts
       routing.post do
         account_data = SignedRequest.new(Api.config).parse(request.body.read)
-        new_account = Account.create(account_data)
+        new_account = CreateAccount.new(account_data).call
 
         response.status = 201
         response['Location'] = "#{@account_route}/#{new_account.username}"
         { message: 'Account saved', data: new_account }.to_json
+      rescue CreateAccount::InvalidRegistration => e
+        puts [e.class, e.message].join ': '
+        routing.halt 400, { message: e.message }.to_json
       rescue Sequel::MassAssignmentRestriction
         routing.halt 400, { message: 'Illegal Attributes' }.to_json
       rescue SignedRequest::VerificationError
