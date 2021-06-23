@@ -17,7 +17,7 @@ module CheckHigh
       policy = CollaborationRequestPolicy.new(
         share_board, auth[:account], collaborator, auth[:scope]
       )
-      raise ForbiddenError unless policy.can_remove?
+      raise ForbiddenError unless policy.can_remove? || policy.can_leave?
 
       share_board.remove_collaborator(collaborator)
       share_board.assignments.each do |assi|
