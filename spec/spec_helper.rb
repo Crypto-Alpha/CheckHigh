@@ -56,5 +56,6 @@ GH_SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_github_account.yml'))
 GO_ACCOUNT_RESPONSE = YAML.load(
   File.read('spec/fixtures/google_token_response.yml')
 )
-GOOD_GO_ACCESS_TOKEN = GO_ACCOUNT_RESPONSE.keys.first
+GOOD_GO_ACCESS_TOKEN = GO_ACCOUNT_RESPONSE['id_token']
+GOOD_GO_AUD = GO_ACCOUNT_RESPONSE['aud']
 GO_SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_google_account.yml'))

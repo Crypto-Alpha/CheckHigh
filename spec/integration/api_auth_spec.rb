@@ -74,15 +74,15 @@ describe 'Test Authentication Routes' do
       account = auth_account['attributes']['account']['attributes']
 
       _(last_response.status).must_equal 200
-      _(account['username']).must_equal(SSO_ACCOUNT['sso_username'])
-      _(account['email']).must_equal(SSO_ACCOUNT['email'])
+      _(account['username']).must_equal(GH_SSO_ACCOUNT['sso_username'])
+      _(account['email']).must_equal(GH_SSO_ACCOUNT['email'])
       _(account['id']).must_be_nil
     end
 
     it 'HAPPY AUTH SSO: should authorize existing SSO account' do
       CheckHigh::Account.create(
-        username: SSO_ACCOUNT['sso_username'],
-        email: SSO_ACCOUNT['email']
+        username: GH_SSO_ACCOUNT['sso_username'],
+        email: GH_SSO_ACCOUNT['email']
       )
 
       gh_access_token = { access_token: GOOD_GH_ACCESS_TOKEN }
@@ -94,8 +94,60 @@ describe 'Test Authentication Routes' do
       account = auth_account['attributes']['account']['attributes']
 
       _(last_response.status).must_equal 200
-      _(account['username']).must_equal(SSO_ACCOUNT['sso_username'])
-      _(account['email']).must_equal(SSO_ACCOUNT['email'])
+      _(account['username']).must_equal(GH_SSO_ACCOUNT['sso_username'])
+      _(account['email']).must_equal(GH_SSO_ACCOUNT['email'])
+      _(account['id']).must_be_nil
+    end
+  end
+
+  describe ' GOOGLE SSO Authorization' do
+    before do
+      WebMock.enable!
+      WebMock.stub_request(:get, app.config.GOOGLE_ACCOUNT_DOMAIN)
+             .to_return(body: GO_ACCOUNT_RESPONSE['go_response'],
+                        status: 200,
+                        headers: { 'content-type' => 'application/json' })
+    end
+
+    after do
+      WebMock.disable!
+    end
+
+    it 'HAPPY AUTH SSO: should authenticate+authorize new valid SSO account' do
+      go_access_token = { id_token: GOOD_GO_ACCESS_TOKEN,
+                          aud: GOOD_GO_AUD }
+      binding.irb
+      post 'api/v1/auth/google_sso',
+           SignedRequest.new(app.config).sign(go_access_token).to_json,
+           @req_header
+
+      auth_account = JSON.parse(last_response.body)['data']
+      account = auth_account['attributes']['account']['attributes']
+
+      _(last_response.status).must_equal 200
+      _(account['username']).must_equal(GO_SSO_ACCOUNT['sso_username'])
+      _(account['email']).must_equal(GO_SSO_ACCOUNT['email'])
+      _(account['id']).must_be_nil
+    end
+
+    it 'HAPPY AUTH SSO: should authorize existing SSO account' do
+      CheckHigh::Account.create(
+        username: GO_SSO_ACCOUNT['sso_username'],
+        email: GO_SSO_ACCOUNT['email']
+      )
+
+      go_access_token = { id_token: GOOD_GO_ACCESS_TOKEN,
+                          aud: GOOD_GO_AUD }
+      post 'api/v1/auth/google_sso',
+           SignedRequest.new(app.config).sign(go_access_token).to_json,
+           @req_header
+
+      auth_account = JSON.parse(last_response.body)['data']
+      account = auth_account['attributes']['account']['attributes']
+
+      _(last_response.status).must_equal 200
+      _(account['username']).must_equal(GO_SSO_ACCOUNT['sso_username'])
+      _(account['email']).must_equal(GO_SSO_ACCOUNT['email'])
       _(account['id']).must_be_nil
     end
   end
