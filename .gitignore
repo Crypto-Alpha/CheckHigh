@@ -5,4 +5,5 @@ app/db/store/*.db
 config/secrets.yml
 config/app.yml
 .DS_Store
-spec/*
+spec/fixtures/github_token_response.yml
+spec/fixtures/google_token_response.yml
