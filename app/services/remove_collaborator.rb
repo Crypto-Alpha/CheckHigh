@@ -20,6 +20,9 @@ module CheckHigh
       raise ForbiddenError unless policy.can_remove?
 
       share_board.remove_collaborator(collaborator)
+      share_board.assignments.each do |assi|
+        share_board.remove_assignment(assi) if assi.owner == collaborator
+      end
       collaborator
     end
   end
