@@ -24,7 +24,7 @@ describe 'Test ShareBoards Handling' do
 
       it 'HAPPY: should get list of share_boards for authorized account' do
         auth = CheckHigh::AuthenticateAccount.call(
-          username: @account_data['username'],
+          email: @account_data['email'],
           password: @account_data['password']
         )
 

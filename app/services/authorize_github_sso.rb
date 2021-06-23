@@ -27,7 +27,6 @@ module CheckHigh
       ).get(ENV['GITHUB_ACCOUNT_URL'])
 
       raise unless gh_response.status == 200
-
       account = GithubAccount.new(JSON.parse(gh_response))
       raise UnauthorizedError unless account.email
 

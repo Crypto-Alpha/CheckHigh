@@ -24,7 +24,7 @@ describe 'Test Course Handling' do
 
       it 'HAPPY: should get list of courses for authorized account' do
         auth = CheckHigh::AuthenticateAccount.call(
-          username: @account_data['username'],
+          email: @account_data['email'],
           password: @account_data['password']
         )
 
@@ -62,7 +62,7 @@ describe 'Test Course Handling' do
 
     it 'HAPPY: should return the right number of assignments related to a specific course' do
       auth = CheckHigh::AuthenticateAccount.call(
-        username: @account_data['username'],
+        email: @account_data['email'],
         password: @account_data['password']
       )
 

@@ -21,7 +21,7 @@ module CheckHigh
         rescue Sequel::MassAssignmentRestriction
           routing.halt 400, { message: 'Illegal Attributes' }.to_json
         rescue SignedRequest::VerificationError
-          routing.hatl 403, { message: 'Must sign request' }.to_json
+          routing.halt 403, { message: 'Must sign request' }.to_json
         rescue StandardError => e
           puts "ERROR CREATING ACCOUNT: #{e.inspect}"
           routing.halt 500, { message: 'Error creating account' }.to_json
@@ -48,6 +48,7 @@ module CheckHigh
 
       # POST api/v1/accounts
       routing.post do
+        binding.irb
         account_data = SignedRequest.new(Api.config).parse(request.body.read)
         new_account = Account.create(account_data)
 
@@ -57,7 +58,7 @@ module CheckHigh
       rescue Sequel::MassAssignmentRestriction
         routing.halt 400, { message: 'Illegal Attributes' }.to_json
       rescue SignedRequest::VerificationError
-        routing.hatl 403, { message: 'Must sign request' }.to_json
+        routing.halt 403, { message: 'Must sign request' }.to_json
       rescue StandardError => e
         puts "ERROR CREATING ACCOUNT: #{e.inspect}"
         routing.halt 500, { message: 'Error creating account' }.to_json

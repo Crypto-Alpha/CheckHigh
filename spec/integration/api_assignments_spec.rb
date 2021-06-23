@@ -60,8 +60,7 @@ describe 'Test Assignment Handling' do
     end
 
     it 'BAD AUTHORIZATION: should not get details with wrong authorization' do
-      assi_data = DATA[:assignments][0]
-      assi = @account.add_owned_assignment(assi_data)
+      assi = CheckHigh::Assignment.first
 
       header 'AUTHORIZATION', auth_header(@wrong_account_data)
       get "/api/v1/assignments/#{assi.id}"

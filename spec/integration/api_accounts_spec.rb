@@ -31,7 +31,9 @@ describe 'Test Account Handling' do
 
   describe 'Account Creation' do
     before do
-      @account_data = DATA[:accounts][1]
+      @account= DATA[:accounts][1]
+      @account_data = { email: @account['email'],
+                        password: @account['password'] }
     end
 
     it 'HAPPY: should be able to create new accounts' do
