@@ -35,7 +35,7 @@ module CheckHigh
           id: id,
           assignment_name: assignment_name,
           content: content,
-          upload_time: created_at.strftime('%Y/%-m/%e%k:%M:%S')
+          upload_time: created_at.strftime('%x %R')
         }, include: {
           owner: owner
         }
