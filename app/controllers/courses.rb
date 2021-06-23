@@ -65,8 +65,10 @@ module CheckHigh
           # POST api/v1/courses/[course_id]/assignments
           # create new assignments in specific course
           routing.post do
+            assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read)
+
             assi_data = CheckHigh::CreateAssiForOwner.call(
-              auth: @auth, assignment_data: JSON.parse(routing.body.read)
+              auth: @auth, assignment_data: assignment_data 
             )
 
             new_assignment = CreateAssiForCourse.call(
