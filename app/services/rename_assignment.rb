@@ -24,7 +24,9 @@ module CheckHigh
       policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
       raise ForbiddenError unless policy.can_edit?
 
-      new_assignment = assignment.update(assignment_name: new_name)
+      assi = assignment.update(assignment_name: new_name)
+      # Here only returns assignment metadata info
+      new_assignment = Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
 
       new_assignment.full_details.merge(policies: policy.summary)
     end

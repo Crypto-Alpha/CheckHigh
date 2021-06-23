@@ -25,9 +25,13 @@ module CheckHigh
       # check if assignment name is the same, if assignment name is the same then cover the original content
       exist_assi = Assignment.find(owner_id: auth[:account].id, assignment_name: assignment_data['assignment_name'])
       if exist_assi.nil?
-        auth[:account].add_owned_assignment(assignment_data)
+        assi = auth[:account].add_owned_assignment(assignment_data)
+        # Here only returns assignment metadata info
+        Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
       else
-        exist_assi.update(content: assignment_data['content'])
+        assi = exist_assi.update(content: assignment_data['content'])
+        # Here only returns assignment metadata info
+        Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
       end
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError

@@ -13,10 +13,30 @@ module CheckHigh
       routing.on String do |assi_id|
         @req_assignment = Assignment.first(id: assi_id)
 
+
+        # GET api/v1/assignments/[assi_id]/assignment_content
+        routing.on('assignment_content') do
+          routing.get do 
+            assignment = GetAssignmentQuery.call(auth: @auth, assignment: @req_assignment)
+            content = ParseAssignmentData.get_content(assignment)
+
+            response['Content-Type'] = 'application/pdf'
+            response.write(content)
+          rescue GetAssignmentQuery::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue GetAssignmentQuery::NotFoundError => e
+            routing.halt 404, { message: e.message }.to_json
+          rescue StandardError => e
+            puts "GET ASSIGNMENT ERROR: #{e.inspect}"
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+        end
+
         # GET api/v1/assignments/[assi_id]
         routing.get do
           assignment = GetAssignmentQuery.call(auth: @auth, assignment: @req_assignment)
-          { data: assignment }.to_json
+          assignment_info = ParseAssignmentData.get_metadata(assignment)
+          { data: assignment_info }.to_json
         rescue GetAssignmentQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
         rescue GetAssignmentQuery::NotFoundError => e
@@ -53,7 +73,7 @@ module CheckHigh
             assignment: @req_assignment
           )
 
-          { message: "Your assignment '#{deleted_assignment.assignment_name}' has been deleted permanently",
+          { message: "Your assignment '#{deleted_assignment[:assignment_name]}' has been deleted permanently",
             data: deleted_assignment }.to_json
         rescue RemoveAssignment::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
@@ -75,9 +95,10 @@ module CheckHigh
         # POST api/v1/assignments/
         # create a lonely assignment
         routing.post do
+          assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read) 
           new_assignment = CreateAssiForOwner.call(
             auth: @auth,
-            assignment_data: JSON.parse(routing.body.read)
+            assignment_data: assignment_data 
           )
 
           response.status = 201
