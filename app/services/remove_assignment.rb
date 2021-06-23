@@ -26,7 +26,16 @@ module CheckHigh
       raise ForbiddenError unless policy.can_delete?
 
       # real delete
-      assignment.destroy
+      destroy_assi = assignment.destroy
+      # get destroy assi metadata
+      { 
+        id: destroy_assi.id,
+        owner_id: destroy_assi.owner_id,
+        assignment_name: destroy_assi.assignment_name,
+        course_id: destroy_assi.course_id,
+        created_at: destroy_assi.created_at, 
+        updated_at: destroy_assi.updated_at 
+      }
     end
 
     def self.call_for_course(auth:, course:, assignment:)
@@ -37,7 +46,9 @@ module CheckHigh
       raise ForbiddenError unless policy.can_delete?
 
       # Remove assignment from a course
-      course.remove_assignment(assignment)
+      assi = course.remove_assignment(assignment)
+      # Here only returns assignment metadata info
+      Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
     end
 
     def self.call_for_share_board(auth:, share_board:, assignment:)
@@ -48,7 +59,9 @@ module CheckHigh
       raise ForbiddenError unless policy.can_delete?
 
       # Remove assignment from a share board
-      share_board.remove_assignment(assignment)
+      assi = share_board.remove_assignment(assignment)
+      # Here only returns assignment metadata info
+      Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
     end
   end
 end

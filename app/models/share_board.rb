@@ -46,13 +46,24 @@ module CheckHigh
         relationships: {
           owner: owner,
           collaborators: collaborators,
-          assignments: assignments
+          assignments: get_assignments(id)
         }
       )
     end
 
     def to_json(options = {})
       JSON(to_h, options)
+    end
+
+    private
+
+    def get_assignments(share_board_id)
+      assis = ShareBoard.find(id: share_board_id).assignments
+      if assis.count != 0
+        assis.sort_by(&:created_at).map do |assignment|
+          ParseAssignmentData.get_metadata_from_db(assignment)
+        end
+      else [] end
     end
   end
 end

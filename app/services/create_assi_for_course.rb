@@ -23,7 +23,9 @@ module CheckHigh
       policy = CoursePolicy.new(auth[:account], course, auth[:scope])
       raise ForbiddenError unless policy.can_add_assignments?
 
-      course.add_assignment(assignment_data)
+      assi = course.add_assignment(assignment_data)
+      # Here only returns assignment metadata info
+      Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError
     end

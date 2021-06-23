@@ -38,13 +38,24 @@ module CheckHigh
       to_h.merge(
         relationships: {
           owner: owner,
-          assignments: assignments
+          assignments: get_assignments(id)
         }
       )
     end
 
     def to_json(options = {})
       JSON(to_h, options)
+    end
+    
+    private
+
+    def get_assignments(course_id)
+      assis = Course.find(id: course_id).assignments
+      if assis.count != 0
+        assis.sort_by(&:created_at).map do |assignment|
+          ParseAssignmentData.get_metadata_from_db(assignment)
+        end
+      else [] end
     end
   end
 end
