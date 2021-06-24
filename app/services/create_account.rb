@@ -14,7 +14,8 @@ module CheckHigh
     def call
       raise(InvalidRegistration, 'Username exists') unless username_available?
 
-      Account.create(@registration)
+      new_account = Account.create(@registration)
+      CreateAccountExample.call(new_account)
     end
 
     def username_available?

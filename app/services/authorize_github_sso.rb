@@ -34,8 +34,13 @@ module CheckHigh
     end
 
     def find_or_create_sso_account(account_data)
-      Account.first(email: account_data[:email]) ||
-        Account.create_github_account(account_data)
+      exist = Account.first(email: account_data[:email])
+      unless !exist.nil?
+        new_account = Account.create_github_account(account_data)
+        CreateAccountExample.call(new_account)
+      else
+        exist
+      end
     end
 
     def account_and_token(account)
