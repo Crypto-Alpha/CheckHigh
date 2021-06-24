@@ -11,7 +11,7 @@ module CheckHigh
 
     # collaborator only can VIEW the other's assignment
     def can_view?
-      can_read? && (account_owns_assignment? || account_collaborates_on_share_board?)
+      can_read? && (account_owns_assignment? || account_collaborates_on_share_board? || account_owned_share_board?)
     end
 
     def can_edit?
@@ -47,6 +47,13 @@ module CheckHigh
     def account_collaborates_on_share_board?
       @assignment.share_boards.each do |srb|
         return true if srb.collaborators.include?(@account)
+      end
+      false
+    end
+
+    def account_owned_share_board?
+      @assignment.share_boards.each do |srb|
+        return true if srb.owner == @account
       end
       false
     end
