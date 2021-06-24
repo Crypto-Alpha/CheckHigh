@@ -44,7 +44,6 @@ describe 'Test Assignment Handling' do
       result = JSON.parse(last_response.body)['data']['attributes']
       _(result['id']).must_equal assi.id
       _(result['assignment_name']).must_equal assi.assignment_name
-      _(result['content']).must_equal assi.content
     end
 
     it 'SAD AUTHORIZATION: should not get details without authorization' do
@@ -97,7 +96,6 @@ describe 'Test Assignment Handling' do
 
       _(created['id']).must_equal assi.id
       _(created['assignment_name']).must_equal @assi_data['assignment_name']
-      _(created['content']).must_equal @assi_data['content']
     end
 
     it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
@@ -153,7 +151,6 @@ describe 'Test Assignment Handling' do
 
       _(created['id']).must_equal assi.id
       _(created['assignment_name']).must_equal @assi_data['assignment_name']
-      _(created['content']).must_equal @assi_data['content']
     end
 
     it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
