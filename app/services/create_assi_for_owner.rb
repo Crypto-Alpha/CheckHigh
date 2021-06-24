@@ -23,16 +23,33 @@ module CheckHigh
       raise ForbiddenError unless auth[:scope].can_write?('assignments')
 
       # check if assignment name is the same, if assignment name is the same then cover the original content
-      exist_assi = Assignment.find(owner_id: auth[:account].id, assignment_name: assignment_data['assignment_name'])
-      if exist_assi.nil?
-        assi = auth[:account].add_owned_assignment(assignment_data)
-        # Here only returns assignment metadata info
-        Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
-      else
-        assi = exist_assi.update(content: assignment_data['content'])
-        # Here only returns assignment metadata info
-        Assignment.select(:id, :owner_id, :course_id, :assignment_name, :created_at, :updated_at).where(id: assi.id).first
+      exist_assi = Assignment.find(owner_id: auth[:account].id,
+                                   assignment_name: assignment_data['assignment_name'])
+
+      if exist_assi
+        index_ = assignment_data['assignment_name'][-4] == '.' ? -5 : -6
+        name_num = 0
       end
+
+      while exist_assi
+        name_num += 1
+        try_name = String.new(assignment_data['assignment_name'])
+        try_name.insert(index_, "(#{name_num})")
+        exist_assi = Assignment.find(owner_id: auth[:account].id,
+                                     assignment_name: try_name)
+      end
+
+      assignment_data['assignment_name'] = try_name if try_name
+
+      assi = auth[:account].add_owned_assignment(assignment_data)
+      # Here only returns assignment metadata info
+      Assignment.select(:id,
+                        :owner_id,
+                        :course_id,
+                        :assignment_name,
+                        :created_at,
+                        :updated_at)
+                .where(id: assi.id).first
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError
     end
