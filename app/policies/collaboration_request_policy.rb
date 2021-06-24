@@ -22,6 +22,11 @@ module CheckHigh
         (@requestor.can_remove_collaborators? && target_is_collaborator?)
     end
 
+    def can_leave?
+      can_write? &&
+        (@requestor.can_leave? && target_is_collaborator?)
+    end
+
     private
 
     def can_write?
