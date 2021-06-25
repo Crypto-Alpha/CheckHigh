@@ -19,7 +19,6 @@ module CheckHigh
     end
 
     def self.get_metadata(assignment)
-      content = assignment[:attributes][:content]
       assignment[:attributes].delete(:content)
       assignment
     end

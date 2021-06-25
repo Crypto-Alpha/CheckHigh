@@ -65,6 +65,7 @@ module CheckHigh
           # create new assignments in specific share board
           routing.post do
             assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read) 
+
             assi_data = CheckHigh::CreateAssiForOwner.call(
               auth: @auth, assignment_data: assignment_data 
             )

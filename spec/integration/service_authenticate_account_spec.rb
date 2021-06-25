@@ -14,7 +14,7 @@ describe 'Test AuthenticateAccount service' do
   it 'HAPPY: should authenticate valid account credentials' do
     credentials = DATA[:accounts].first
     account = CheckHigh::AuthenticateAccount.call(
-      username: credentials['username'], password: credentials['password']
+      email: credentials['email'], password: credentials['password']
     )
     _(account).wont_be_nil
   end
@@ -23,7 +23,7 @@ describe 'Test AuthenticateAccount service' do
     credentials = DATA[:accounts].first
     _(proc {
       CheckHigh::AuthenticateAccount.call(
-        username: credentials['username'], password: 'malword'
+        email: credentials['email'], password: 'malword'
       )
     }).must_raise CheckHigh::AuthenticateAccount::UnauthorizedError
   end
@@ -31,7 +31,7 @@ describe 'Test AuthenticateAccount service' do
   it 'BAD: will not authenticate with invalid credentials' do
     _(proc {
       CheckHigh::AuthenticateAccount.call(
-        username: 'maluser', password: 'malword'
+        email: 'maluser@gmail.com', password: 'malword'
       )
     }).must_raise CheckHigh::AuthenticateAccount::UnauthorizedError
   end

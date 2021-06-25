@@ -33,7 +33,7 @@ describe 'Test AddCollaborator service' do
 
   it 'BAD: should not add owner as a collaborator' do
     auth = CheckHigh::AuthenticateAccount.call(
-      username: @owner_data['username'],
+      email: @owner_data['email'],
       password: @owner_data['password']
     )
 

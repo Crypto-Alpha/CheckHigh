@@ -21,19 +21,23 @@ gem 'hirb', '~>0'
 gem 'sequel', '~>5'
 
 group :production do
-  gem 'http'
   gem 'pg'
 end
+
+# External Services
+gem 'http'
 
 # Testing
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
   gem 'webmock'
+  gem 'simplecov'
 end
 
 # Debugging
 gem 'pry' # necessary for rake console
+gem 'rack-test'
 
 # Development
 group :development do
@@ -43,7 +47,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rack-test'
+
   gem 'sequel-seed'
   gem 'sqlite3'
 end

@@ -98,7 +98,7 @@ module CheckHigh
           assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read) 
           new_assignment = CreateAssiForOwner.call(
             auth: @auth,
-            assignment_data: assignment_data 
+            assignment_data: assignment_data
           )
 
           response.status = 201
