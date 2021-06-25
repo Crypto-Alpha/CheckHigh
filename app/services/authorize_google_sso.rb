@@ -20,19 +20,22 @@ module CheckHigh
       account_and_token(sso_account)
     end
 
+    def domain_available?(iss)
+      iss.include?(config.GOOGLE_ACCOUNT_DOMAIN)
+    end
+
+    def expire?(exp)
+      exp > Time.now.to_i
+    end
+
     def get_google_account(id_token, aud)
-      validator = GoogleIDToken::Validator.new
       raise UnauthorizedError unless aud == config.GOOGLE_CLIENT_ID
 
-      payload = validator.check(id_token, aud)
+      payload = GoogleIDToken::Validator.new.check(id_token, aud)
+      raise UnauthorizedError unless domain_available?(payload['iss'])
+      raise UnauthorizedError unless expire?(payload['exp'])
 
-      raise UnauthorizedError unless payload['iss'].include?(config.GOOGLE_ACCOUNT_DOMAIN)
-      raise UnauthorizedError unless payload['exp'] > Time.now.to_i
-
-      email = payload['email']
-      username = email.split('@').first
-
-      { username: username, email: email }
+      { username: payload['email'].split('@').first, email: payload['email'] }
     end
 
     def find_or_create_sso_account(account_data)

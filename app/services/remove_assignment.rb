@@ -19,15 +19,7 @@ module CheckHigh
       end
     end
 
-    def self.call(auth:, assignment:)
-      raise NotFoundError unless assignment
-
-      policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
-      raise ForbiddenError unless policy.can_delete?
-
-      # real delete
-      destroy_assi = assignment.destroy
-      # get destroy assi metadata
+    def self.get_destroy_metadata(destroy_assi)
       {
         id: destroy_assi.id,
         owner_id: destroy_assi.owner_id,
@@ -36,6 +28,16 @@ module CheckHigh
         created_at: destroy_assi.created_at,
         updated_at: destroy_assi.updated_at
       }
+    end
+
+    def self.call(auth:, assignment:)
+      raise NotFoundError unless assignment
+
+      policy = AssignmentPolicy.new(auth[:account], assignment, auth[:scope])
+      raise ForbiddenError unless policy.can_delete?
+
+      # real delete & get destroy assi metadata
+      get_destroy_metadata(assignment.destroy)
     end
 
     def self.call_for_course(auth:, course:, assignment:)
