@@ -204,7 +204,7 @@ describe 'Test Assignment Handling' do
 
       # no situation of modifying 'create_add', since we only parse content and assignment_name
       # create_add won't be parsed, so it also won't be modified
-      _(last_response.status).must_equal 201 
+      _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
     end
   end

@@ -59,11 +59,13 @@ module CheckHigh
 
     def get_assignments(share_board_id)
       assis = ShareBoard.find(id: share_board_id).assignments
-      if assis.count != 0
+      if assis.count.zero?
+        []
+      else
         assis.sort_by(&:created_at).map do |assignment|
           ParseAssignmentData.get_metadata_from_db(assignment)
         end
-      else [] end
+      end
     end
   end
 end

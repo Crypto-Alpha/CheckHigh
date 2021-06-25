@@ -53,4 +53,3 @@ GH_ACCOUNT_RESPONSE = YAML.load(
 )
 GOOD_GH_ACCESS_TOKEN = GH_ACCOUNT_RESPONSE.keys.first
 GH_SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_github_accounts.yml'))
-

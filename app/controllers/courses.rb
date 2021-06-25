@@ -3,6 +3,7 @@
 require_relative './app'
 
 module CheckHigh
+  # rubocop:disable Metrics/ClassLength
   # Web controller for CheckHigh API
   class Api < Roda
     route('courses') do |routing|
@@ -68,7 +69,7 @@ module CheckHigh
             assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read)
 
             assi_data = CheckHigh::CreateAssiForOwner.call(
-              auth: @auth, assignment_data: assignment_data 
+              auth: @auth, assignment_data: assignment_data
             )
 
             new_assignment = CreateAssiForCourse.call(
@@ -176,4 +177,5 @@ module CheckHigh
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

@@ -31,8 +31,8 @@ gem 'http'
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
-  gem 'webmock'
   gem 'simplecov'
+  gem 'webmock'
 end
 
 # Debugging
@@ -47,7 +47,6 @@ group :development do
 end
 
 group :development, :test do
-
   gem 'sequel-seed'
   gem 'sqlite3'
 end

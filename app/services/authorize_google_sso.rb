@@ -6,6 +6,7 @@ require 'http'
 module CheckHigh
   # Find or create an SsoAccount based on Google code
   class AuthorizeGoogleSso
+    # Error for no email adress to login
     class UnauthorizedError < StandardError
       def message
         'Invalid Credentials: No Email Address.'
@@ -36,7 +37,7 @@ module CheckHigh
 
     def find_or_create_sso_account(account_data)
       exist = Account.first(email: account_data[:email])
-      unless !exist.nil?
+      if exist.nil?
         new_account = Account.create_github_account(account_data)
         CreateAccountExample.call(new_account)
       else
