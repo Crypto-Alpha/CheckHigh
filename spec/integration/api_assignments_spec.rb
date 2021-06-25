@@ -126,19 +126,23 @@ describe 'Test Assignment Handling' do
       _(data).must_be_nil
     end
 
-    # it 'BAD VULNERABILITY: should not create with mass assignment' do
-    #   bad_data = @assi_data.clone
-    #   bad_data['created_at'] = '1900-01-01'
+    # no situation of modifying 'create_add', since we only parse content and assignment_name
+    # create_add won't be parsed, so it also won't be modified
+    it 'BAD VULNERABILITY: should not create with mass assignment' do
+      bad_data = @assi_data.clone
+      bad_data['created_at'] = '1900-01-01'
+      bad_data_new = {
+        content: bad_data['content'],
+        created_at: bad_data['created_at']
+      }
 
-    #   header 'AUTHORIZATION', auth_header(@account_data)
-    #   header 'assignment_name', bad_data['assignment_name']
-    #   post "api/v1/courses/#{@crs.id}/assignments", bad_data.to_json
+      header 'AUTHORIZATION', auth_header(@account_data)
+      header 'assignment_name', bad_data['assignment_name']
+      post "api/v1/courses/#{@crs.id}/assignments", bad_data_new.to_json
 
-    #   data = JSON.parse(last_response.body)['data']
-    #   _(last_response.status).must_equal 400
-    #   _(last_response.header['Location']).must_be_nil
-    #   _(data).must_be_nil
-    # end
+      _(last_response.status).must_equal 201
+      _(last_response.header['Location'].size).must_be :>, 0
+    end
   end
 
   describe 'Creating assignments' do
@@ -185,18 +189,23 @@ describe 'Test Assignment Handling' do
       _(data).must_be_nil
     end
 
-    # it 'BAD VULNERABILITY: should not create with mass assignment' do
-    #   bad_data = @assi_data.clone
-    #   bad_data['created_at'] = '1900-01-01'
+    it 'BAD VULNERABILITY: should not create with mass assignment' do
+      bad_data = @assi_data.clone
+      bad_data['created_at'] = '1900-01-01'
+      bad_data_new = {
+        content: bad_data['content'],
+        created_at: bad_data['created_at']
+      }
 
-    #   header 'AUTHORIZATION', auth_header(@account_data)
-    #   header 'assignment_name', bad_data['assignment_name']
-    #   post "api/v1/share_boards/#{@srb.id}/assignments", bad_data['content'].to_json
+      header 'AUTHORIZATION', auth_header(@account_data)
+      header 'assignment_name', bad_data['assignment_name']
 
-    #   data = JSON.parse(last_response.body)['data']
-    #   _(last_response.status).must_equal 400
-    #   _(last_response.header['Location']).must_be_nil
-    #   _(data).must_be_nil
-    # end
+      post "api/v1/share_boards/#{@srb.id}/assignments", bad_data_new.to_json
+
+      # no situation of modifying 'create_add', since we only parse content and assignment_name
+      # create_add won't be parsed, so it also won't be modified
+      _(last_response.status).must_equal 201 
+      _(last_response.header['Location'].size).must_be :>, 0
+    end
   end
 end

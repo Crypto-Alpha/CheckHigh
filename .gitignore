@@ -5,5 +5,9 @@ app/db/store/*.db
 config/secrets.yml
 config/app.yml
 .DS_Store
-spec/fixtures/github_token_response.yml
-spec/fixtures/sso_github_account.yml
+
+spec/fixtures/*.yml
+
+# other files
+coverage/*
+!coverage/.resultset.json
