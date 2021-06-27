@@ -13,10 +13,9 @@ module CheckHigh
       routing.on String do |assi_id|
         @req_assignment = Assignment.first(id: assi_id)
 
-
         # GET api/v1/assignments/[assi_id]/assignment_content
         routing.on('assignment_content') do
-          routing.get do 
+          routing.get do
             assignment = GetAssignmentQuery.call(auth: @auth, assignment: @req_assignment)
             content = ParseAssignmentData.get_content(assignment)
 
@@ -95,10 +94,10 @@ module CheckHigh
         # POST api/v1/assignments/
         # create a lonely assignment
         routing.post do
-          assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read) 
+          assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read)
           new_assignment = CreateAssiForOwner.call(
             auth: @auth,
-            assignment_data: assignment_data 
+            assignment_data: assignment_data
           )
 
           response.status = 201

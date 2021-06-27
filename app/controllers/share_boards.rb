@@ -3,6 +3,7 @@
 require_relative './app'
 
 module CheckHigh
+  # rubocop:disable Metrics/ClassLength
   # Web controller for CheckHigh API
   class Api < Roda
     route('share_boards') do |routing|
@@ -42,7 +43,8 @@ module CheckHigh
               )
 
               {
-                message: "Your assignment '#{removed_assignment.assignment_name}' has been removed from the share board", data: removed_assignment
+                message: "Assignment '#{removed_assignment.assignment_name}' has been removed from the shareboard",
+                data: removed_assignment
               }.to_json
             rescue RemoveAssignment::ForbiddenError => e
               routing.halt 403, { message: e.message }.to_json
@@ -64,9 +66,10 @@ module CheckHigh
           # POST api/v1/share_boards/[srb_id]/assignments
           # create new assignments in specific share board
           routing.post do
-            assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read) 
+            assignment_data = ParseAssignmentData.call(routing.headers, routing.body.read)
+
             assi_data = CheckHigh::CreateAssiForOwner.call(
-              auth: @auth, assignment_data: assignment_data 
+              auth: @auth, assignment_data: assignment_data
             )
 
             new_assignment = CreateAssiForSrb.call(
@@ -223,4 +226,5 @@ module CheckHigh
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

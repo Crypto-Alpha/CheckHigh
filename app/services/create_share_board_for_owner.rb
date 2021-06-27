@@ -3,9 +3,10 @@
 module CheckHigh
   # Create new share board for an owner
   class CreateShareBoardForOwner
+    # Error for not allowed to create shareboard for owner
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to add more assignments'
+        'You are not allowed to create shareboard'
       end
     end
 

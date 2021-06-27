@@ -5,6 +5,8 @@ ENV['RACK_ENV'] = 'test'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'yaml'
+require 'simplecov'
+SimpleCov.start
 
 require_relative 'test_load_all'
 
@@ -17,7 +19,7 @@ end
 
 def authenticate(account_data)
   CheckHigh::AuthenticateAccount.call(
-    username: account_data['username'],
+    email: account_data['email'],
     password: account_data['password']
   )
 end
@@ -33,7 +35,7 @@ def authorization(account_data)
 
   contents = AuthToken.contents(auth[:attributes][:auth_token])
   account = contents['payload']['attributes']
-  { account: CheckHigh::Account.first(username: account['username']),
+  { account: CheckHigh::Account.first(email: account['email']),
     scope: AuthScope.new(contents['scope']) }
 end
 
@@ -44,3 +46,10 @@ DATA = {
   courses: YAML.load(File.read('app/db/seeds/course_seeds.yml')),
   owned_assignments: YAML.load(File.read('app/db/seeds/owners_assignments.yml'))
 }.freeze
+
+## Github SSO fixtures
+GH_ACCOUNT_RESPONSE = YAML.load(
+  File.read('spec/fixtures/github_token_response.yml')
+)
+GOOD_GH_ACCESS_TOKEN = GH_ACCOUNT_RESPONSE.keys.first
+GH_SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_github_accounts.yml'))

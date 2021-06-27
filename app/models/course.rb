@@ -46,16 +46,18 @@ module CheckHigh
     def to_json(options = {})
       JSON(to_h, options)
     end
-    
+
     private
 
     def get_assignments(course_id)
       assis = Course.find(id: course_id).assignments
-      if assis.count != 0
+      if assis.count.zero?
+        []
+      else
         assis.sort_by(&:created_at).map do |assignment|
           ParseAssignmentData.get_metadata_from_db(assignment)
         end
-      else [] end
+      end
     end
   end
 end

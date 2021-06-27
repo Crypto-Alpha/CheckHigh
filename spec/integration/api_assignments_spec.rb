@@ -44,7 +44,6 @@ describe 'Test Assignment Handling' do
       result = JSON.parse(last_response.body)['data']['attributes']
       _(result['id']).must_equal assi.id
       _(result['assignment_name']).must_equal assi.assignment_name
-      _(result['content']).must_equal assi.content
     end
 
     it 'SAD AUTHORIZATION: should not get details without authorization' do
@@ -60,8 +59,7 @@ describe 'Test Assignment Handling' do
     end
 
     it 'BAD AUTHORIZATION: should not get details with wrong authorization' do
-      assi_data = DATA[:assignments][0]
-      assi = @account.add_owned_assignment(assi_data)
+      assi = CheckHigh::Assignment.first
 
       header 'AUTHORIZATION', auth_header(@wrong_account_data)
       get "/api/v1/assignments/#{assi.id}"
@@ -84,11 +82,15 @@ describe 'Test Assignment Handling' do
     before do
       @crs = CheckHigh::Course.first
       @assi_data = DATA[:assignments][4]
+      # header 'CONTENT_TYPE', 'text/plain; charset=us-ascii'
+      # header 'assignment_name', assignment_data[:assignment_name]
     end
 
     it 'HAPPY: should be able to create a new assignment' do
       header 'AUTHORIZATION', auth_header(@account_data)
-      post "api/v1/courses/#{@crs.id}/assignments", @assi_data.to_json
+      header 'assignment_name', @assi_data['assignment_name']
+
+      post "api/v1/courses/#{@crs.id}/assignments", @assi_data['content'].to_json
 
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
@@ -98,12 +100,13 @@ describe 'Test Assignment Handling' do
 
       _(created['id']).must_equal assi.id
       _(created['assignment_name']).must_equal @assi_data['assignment_name']
-      _(created['content']).must_equal @assi_data['content']
     end
 
     it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
       header 'AUTHORIZATION', auth_header(@wrong_account_data)
-      post "api/v1/courses/#{@crs.id}/assignments", @assi_data.to_json
+      header 'assignment_name', @assi_data['assignment_name']
+
+      post "api/v1/courses/#{@crs.id}/assignments", @assi_data['content'].to_json
 
       data = JSON.parse(last_response.body)['data']
 
@@ -113,7 +116,8 @@ describe 'Test Assignment Handling' do
     end
 
     it 'SAD AUTHORIZATION: should not create without any authorization' do
-      post "api/v1/courses/#{@crs.id}/assignments", @assi_data.to_json
+      header 'assignment_name', @assi_data['assignment_name']
+      post "api/v1/courses/#{@crs.id}/assignments", @assi_data['content'].to_json
 
       data = JSON.parse(last_response.body)['data']
 
@@ -122,17 +126,22 @@ describe 'Test Assignment Handling' do
       _(data).must_be_nil
     end
 
+    # no situation of modifying 'create_add', since we only parse content and assignment_name
+    # create_add won't be parsed, so it also won't be modified
     it 'BAD VULNERABILITY: should not create with mass assignment' do
       bad_data = @assi_data.clone
       bad_data['created_at'] = '1900-01-01'
+      bad_data_new = {
+        content: bad_data['content'],
+        created_at: bad_data['created_at']
+      }
 
       header 'AUTHORIZATION', auth_header(@account_data)
-      post "api/v1/courses/#{@crs.id}/assignments", bad_data.to_json
+      header 'assignment_name', bad_data['assignment_name']
+      post "api/v1/courses/#{@crs.id}/assignments", bad_data_new.to_json
 
-      data = JSON.parse(last_response.body)['data']
-      _(last_response.status).must_equal 400
-      _(last_response.header['Location']).must_be_nil
-      _(data).must_be_nil
+      _(last_response.status).must_equal 201
+      _(last_response.header['Location'].size).must_be :>, 0
     end
   end
 
@@ -144,7 +153,8 @@ describe 'Test Assignment Handling' do
 
     it 'HAPPY: should be able to create a new assignment' do
       header 'AUTHORIZATION', auth_header(@account_data)
-      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
+      header 'assignment_name', @assi_data['assignment_name']
+      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data['content'].to_json
 
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
@@ -154,12 +164,12 @@ describe 'Test Assignment Handling' do
 
       _(created['id']).must_equal assi.id
       _(created['assignment_name']).must_equal @assi_data['assignment_name']
-      _(created['content']).must_equal @assi_data['content']
     end
 
     it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
       header 'AUTHORIZATION', auth_header(@wrong_account_data)
-      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
+      header 'assignment_name', @assi_data['assignment_name']
+      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data['content'].to_json
 
       data = JSON.parse(last_response.body)['data']
 
@@ -169,7 +179,8 @@ describe 'Test Assignment Handling' do
     end
 
     it 'SAD AUTHORIZATION: should not create without any authorization' do
-      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data.to_json
+      header 'assignment_name', @assi_data['assignment_name']
+      post "api/v1/share_boards/#{@srb.id}/assignments", @assi_data['content'].to_json
 
       data = JSON.parse(last_response.body)['data']
 
@@ -181,14 +192,20 @@ describe 'Test Assignment Handling' do
     it 'BAD VULNERABILITY: should not create with mass assignment' do
       bad_data = @assi_data.clone
       bad_data['created_at'] = '1900-01-01'
+      bad_data_new = {
+        content: bad_data['content'],
+        created_at: bad_data['created_at']
+      }
 
       header 'AUTHORIZATION', auth_header(@account_data)
-      post "api/v1/share_boards/#{@srb.id}/assignments", bad_data.to_json
+      header 'assignment_name', bad_data['assignment_name']
 
-      data = JSON.parse(last_response.body)['data']
-      _(last_response.status).must_equal 400
-      _(last_response.header['Location']).must_be_nil
-      _(data).must_be_nil
+      post "api/v1/share_boards/#{@srb.id}/assignments", bad_data_new.to_json
+
+      # no situation of modifying 'create_add', since we only parse content and assignment_name
+      # create_add won't be parsed, so it also won't be modified
+      _(last_response.status).must_equal 201
+      _(last_response.header['Location'].size).must_be :>, 0
     end
   end
 end

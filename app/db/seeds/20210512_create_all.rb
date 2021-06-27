@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require './app/controllers/helpers'
+# rubocop:disable Style/MixinUsage
 include CheckHigh::SecureRequestHelpers
+# rubocop:enable Style/MixinUsage
 
 Sequel.seed(:development) do
   def run
@@ -69,14 +71,10 @@ def create_course_assignments
   courses_cycle.each do |course|
     auth_token = AuthToken.create(course.owner)
     auth = scoped_auth(auth_token)
-
     assi_data = assi_info.find { |assi| assi.owner_id == course.owner_id }
-
     next if assi_data.nil?
 
-    CheckHigh::CreateAssiForCourse.call(
-      auth: auth, course: course, assignment_data: assi_data
-    )
+    CheckHigh::CreateAssiForCourse.call(auth: auth, course: course, assignment_data: assi_data)
   end
 end
 
@@ -86,13 +84,9 @@ def create_shareboard_assignments
   4.times do
     assi_info = assi_info_each.next
     share_board = share_boards_cycle.next
-
     auth_token = AuthToken.create(share_board.owner)
     auth = scoped_auth(auth_token)
-
-    CheckHigh::CreateAssiForSrb.call(
-      auth: auth, share_board: share_board, assignment_data: assi_info
-    )
+    CheckHigh::CreateAssiForSrb.call(auth: auth, share_board: share_board, assignment_data: assi_info)
   end
 end
 
@@ -100,14 +94,10 @@ def add_collaborators
   collabor_info = COLLABOR_INFO
   collabor_info.each do |collabor|
     share_board = CheckHigh::ShareBoard.first(share_board_name: collabor['share_board_name'])
-
     auth_token = AuthToken.create(share_board.owner)
     auth = scoped_auth(auth_token)
-
     collabor['collaborator_email'].each do |email|
-      CheckHigh::AddCollaborator.call(
-        auth: auth, share_board: share_board, collab_email: email
-      )
+      CheckHigh::AddCollaborator.call(auth: auth, share_board: share_board, collab_email: email)
     end
   end
 end
