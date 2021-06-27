@@ -2,9 +2,14 @@
 
 API to upload homework assignments and check team's homework answers in your own share boards!
 
+## Status
+[![Ruby v3.0.1](https://img.shields.io/badge/Ruby-3.0.1-green)](https://www.ruby-lang.org/en/news/2021/04/05/ruby-3-0-1-released/)
+
+## [Website Usage](https://checkhigh-api.herokuapp.com)
+
 ## Routes
 
-All routes return Json
+Almost all of the routes return Json, except for `api/v1/assignments/[assignmet_id]/assignment_content` returns **PDF binary codes in text/plain string format**
 
 ### Root
 - GET `/`: Root route shows if Web API is running
@@ -40,7 +45,7 @@ All routes return Json
 - DELETE `api/v1/share_boards/[share_board_id]/collaborators`: remove a new user as a collaborator to a shareboard  
 
 
-### Assignments
+#### Assignments
 - GET `api/v1/assignments`: returns assignments which are not belong to any course
 - POST `api/v1/assignmets`: upload a new assignment
 - GET `api/v1/assignments/[assignmet_id]`: returns assignment infos about a single assignment with given ID
@@ -69,5 +74,5 @@ rake spec
 Run this API using:
 
 ```shell
-rackup
+rake run:dev
 ```
