@@ -1,6 +1,6 @@
 # CheckHigh API
 
-API to upload homework and check team's homework answer in sharing link
+API to upload homework assignments and check team's homework answers in your own share boards!
 
 ## Routes
 
@@ -13,33 +13,40 @@ All routes return Json
 
 #### Courses
 - GET `api/v1/courses` : returns user's all courses
-- POST `api/v1/courses/` : create a new course
-- GET `api/v1/courses/[course_id]/assignments` : returns course's all assignments
-- POST `api/v1/courses/[course_id]/assignments`
-
-TODO:
-- PUT `api/v1/courses/[course_id]` : update a course
+- POST `api/v1/courses` : create a new course
+- GET `api/v1/courses/[course_id]`: return a specific course info
+- PUT `api/v1/courses/[course_id]` : update a course (for now supports renaming course feature)
 - DELETE `api/v1/courses/[course_id]` : delete a course
+##### Course assignments related
+- GET `api/v1/courses/[course_id]/assignments` : returns course's all assignments
+- POST `api/v1/courses/[course_id]/assignments`: create new assignments into a specific course
+- PUT `api/v1/courses/[course_id]/assignments/[assignment_id]`: move an assignment into a course
+- DELETE `api/v1/courses/[course_id]/assignments/[assignment_id]`: remove an assignment from a course
 
-#### Share_Boards
-- GET `api/v1/share_boards` : returns user's all share_boards
-- POST `api/v1/share_boards/` : create a new share_boards
-- GET `api/v1/share_boards/[share_board_id]` : returns share_board's information
-- GET `api/v1/share_boards/[share_board_id]/assignments` : returns share_board's all assignments
-- POST `api/v1/share_boards/[share_board_id]/assignments`
+#### Share Boards
+- GET `api/v1/share_boards` : returns user's all shareboards
+- POST `api/v1/share_boards` : create a new shareboard
+- GET `api/v1/share_boards/[share_board_id]` : returns a specific shareboard's info
+- PUT `api/v1/share_boards/[share_board_id]` : update a shareboard (for now supports renaming shareboard feature)
+- DELETE `api/v1/share_boards/[share_board_id]` : delete a shareboard
+##### Share Board assignments related
+- GET `api/v1/share_boards/[share_board_id]/assignments` : returns shareboard's all assignments
+- POST `api/v1/share_boards/[share_board_id]/assignments` : create new assignments into a specific shareboard 
+- POST `api/v1/share_boards/[share_board_id]/assignments/[assignment_id]` : move an assignment into a shareboard 
+- DELETE `api/v1/share_boards/[share_board_id]/assignments/[assignment_id]`: remove an assignment from a shareboard
+##### Share Board collaborators related
+- POST `api/v1/share_boards/[share_board_id]/collaborators`: send invitation links to who didn't register checkhigh yet to register as a collaborator 
+- PUT `api/v1/share_boards/[share_board_id]/collaborators`: add a new user as a collaborator to a shareboard  
+- DELETE `api/v1/share_boards/[share_board_id]/collaborators`: remove a new user as a collaborator to a shareboard  
 
-TODO:
-- PUT `api/v1/share_boards/[share_board_id]` : update a share_board
-- DELETE `api/v1/share_boards/[share_board_id]` : delete a share_board
 
 ### Assignments
-- GET `api/v1/assignments`: returns assignments which are not belongs to any course
-- POST `api/v1/assignmets/`: upload a new assignment
-- GET `api/v1/assignments/[assignmet_id]`: returns details about a single assignment with given ID
-
-TODO:
-- PUT `api/v1/assignmets/[assignmet_id]` : update a assignmet
-- DELETE `api/v1/assignmets/[assignmet_id]` : delete a assignmet
+- GET `api/v1/assignments`: returns assignments which are not belong to any course
+- POST `api/v1/assignmets`: upload a new assignment
+- GET `api/v1/assignments/[assignmet_id]`: returns assignment infos about a single assignment with given ID
+- GET `api/v1/assignments/[assignmet_id]/assignment_content`: returns assignment content about a single assignment with given ID (now storing PDF binary codes encrypted)
+- PUT `api/v1/assignmets/[assignmet_id]` : update an assignment (for now supports renaming assignment name features)
+- DELETE `api/v1/assignmets/[assignmet_id]` : delete an assignment
 
 ## Install
 
@@ -54,7 +61,7 @@ bundle install
 Run the test script:
 
 ```shell
-ruby spec/api_spec.rb
+rake spec
 ```
 
 ## Execute
