@@ -78,6 +78,6 @@ rake run:dev
 ```
 
 ## License
-2020, Rona Lu-Lai 呂賴臻柔
-2020, Riley Kao 高靖雅
-2020, Yan-Yu Fu 傅嬿羽
+* 2021, Rona Lu-Lai 呂賴臻柔
+* 2021, Riley Kao 高靖雅
+* 2021, Yan-Yu Fu 傅嬿羽
